@@ -68,16 +68,16 @@ const routes = [
       description: "Conversa em tempo real",
     },
   },
-  // {
-  //   path: "/profile",
-  //   name: "Profile",
-  //   component: ProfileView,
-  //   meta: {
-  //     requiresAuth: true,
-  //     title: "Perfil - ChatApp",
-  //     description: "Gerencie seu perfil",
-  //   },
-  // },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: ProfileView,
+    meta: {
+      requiresAuth: true,
+      title: "Perfil - ChatApp",
+      description: "Gerencie seu perfil",
+    },
+  },
   // {
   //   path: "/reset-password/:token",
   //   name: "ResetPassword",
@@ -89,15 +89,15 @@ const routes = [
   //   },
   // },
   // 404 page
-  // {
-  //   path: "/:pathMatch(.*)*",
-  //   name: "NotFound",
-  //   component: () => import("@/views/NotFoundView.vue"),
-  //   meta: {
-  //     title: "Página não encontrada - ChatApp",
-  //     description: "A página que você procura não existe",
-  //   },
-  // },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: () => import("@/views/NotFoundView.vue"),
+    meta: {
+      title: "Página não encontrada - ChatApp",
+      description: "A página que você procura não existe",
+    },
+  },
 ];
 
 const router = createRouter({
