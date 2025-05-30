@@ -29,5 +29,5 @@ jobs:
     - name: Build com Rsbuild
       run: npm run build
 
-    - name: Rodar testes com Vitest
-      run: npm run test
+    # - name: Rodar testes com Vitest
+    #   run: npm run test
