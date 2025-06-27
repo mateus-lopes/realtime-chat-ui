@@ -4,6 +4,7 @@ export interface User {
   _id: string;
   email: string;
   fullName: string;
+  about?: string;
   profilePicture?: string;
   isOnline: boolean;
   lastSeen?: Date;
@@ -25,6 +26,8 @@ export interface LoginRequest {
 
 export interface UpdateProfileRequest {
   profilePicture?: string;
+  fullName?: string;
+  status?: string;
   userId: string;
 }
 
