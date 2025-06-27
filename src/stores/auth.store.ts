@@ -3,9 +3,9 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import authService from "@/services/auth.service";
+import { getTokenExpiryInfo, isTokenValid } from "@/utils/jwt.utils";
 import type {
   User,
-  AuthState,
   LoginCredentials,
   RegisterCredentials,
   ForgotPasswordRequest,
@@ -21,19 +21,33 @@ export const useAuthStore = defineStore("auth", () => {
   const error = ref<string | null>(null);
 
   // Getters
-  const isAuthenticated = computed(() => !!token.value && !!user.value);
+  const isAuthenticated = computed(() => {
+    const hasToken = !!token.value;
+    const hasUser = !!user.value;
+    const tokenValid = token.value ? isTokenValid(token.value) : false;
+    return hasToken && hasUser && tokenValid;
+  });
+
   const userName = computed(() => user.value?.fullName || "");
+  const userAbout = computed(() => user.value?.about || "");
   const userEmail = computed(() => user.value?.email || "");
   const userAvatar = computed(() => user.value?.profilePicture || "");
   const isOnline = computed(() => user.value?.isOnline || false);
 
-  // Actions
+  // 🔄 Token-related getters
+  const tokenExpiryInfo = computed(() => {
+    return token.value ? getTokenExpiryInfo(token.value) : "No token";
+  });
+
+  const refreshStatus = computed(() => {
+    return authService.getRefreshStatus();
+  });
+
   const initializeAuth = async () => {
     try {
       isLoading.value = true;
       error.value = null;
 
-      // Check for stored auth data
       const storedToken = authService.getStoredToken();
       const storedUser = authService.getStoredUser();
 
@@ -41,12 +55,10 @@ export const useAuthStore = defineStore("auth", () => {
         token.value = storedToken;
         user.value = storedUser;
 
-        // Verify token is still valid by fetching current user
         const currentUser = await authService.getCurrentUser();
         if (currentUser) {
           user.value = currentUser;
         } else {
-          // Token is invalid, clear auth data
           await logout();
         }
       }
@@ -156,11 +168,27 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const updateUser = (updatedUser: Partial<User>) => {
-    if (user.value) {
-      user.value = { ...user.value, ...updatedUser };
-      // Store the updated user data
-      localStorage.setItem("user_data", JSON.stringify(user.value));
+  const updateUser = async (updatedUser: Partial<User>) => {
+    console.log("Updating user:", updatedUser);
+    console.log("Current user before update:", user.value);
+    try {
+      isLoading.value = true;
+      error.value = null;
+
+      if (user.value) {
+        user.value = { ...user.value, ...updatedUser };
+        if (typeof window !== "undefined" && window.localStorage) {
+          localStorage.setItem("user_data", JSON.stringify(user.value));
+        }
+      }
+
+      await authService.updateProfile(updatedUser);
+    } catch (err: any) {
+      console.error("Update user error:", err);
+      error.value = err.message || "Failed to update user information";
+      throw err;
+    } finally {
+      isLoading.value = false;
     }
   };
 
@@ -168,7 +196,6 @@ export const useAuthStore = defineStore("auth", () => {
     error.value = null;
   };
 
-  // Mobile-specific actions
   const setOnlineStatus = (online: boolean) => {
     if (user.value) {
       user.value.isOnline = online;
@@ -181,7 +208,6 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  // Return store interface
   return {
     // State
     user,
@@ -193,9 +219,12 @@ export const useAuthStore = defineStore("auth", () => {
     // Getters
     isAuthenticated,
     userName,
+    userAbout,
     userEmail,
     userAvatar,
     isOnline,
+    tokenExpiryInfo,
+    refreshStatus,
 
     // Actions
     initializeAuth,
@@ -211,16 +240,3 @@ export const useAuthStore = defineStore("auth", () => {
     updateLastSeen,
   };
 });
-
-// Helper function to get auth state for components
-export const getAuthState = (): AuthState => {
-  const store = useAuthStore();
-  return {
-    user: store.user,
-    token: store.token,
-    refreshToken: store.refreshToken,
-    isAuthenticated: store.isAuthenticated,
-    isLoading: store.isLoading,
-    error: store.error,
-  };
-};

@@ -2,6 +2,12 @@
 
 import apiService from "./api.service";
 import apiConfig from "@/config/api.config";
+import {
+  isTokenValid,
+  needsRefresh,
+  getNextRefreshTime,
+  debugToken,
+} from "@/utils/jwt.utils";
 import type {
   LoginCredentials,
   RegisterCredentials,
@@ -14,21 +20,57 @@ import type {
   UpdateProfileRequest,
 } from "@/types/auth.types";
 import type { ApiResponse } from "@/types/api.types";
+import type {
+  RefreshTokenRequest,
+  RefreshTokenResponse,
+  TokenRefreshStatus,
+} from "@/types/jwt.types";
 
 class AuthService {
   private readonly TOKEN_KEY = "auth_token";
   private readonly REFRESH_TOKEN_KEY = "refresh_token";
   private readonly USER_KEY = "user_data";
 
+  // 🔄 Token refresh management
+  private refreshTimer: NodeJS.Timeout | null = null;
+  private refreshStatus: TokenRefreshStatus = {
+    state: "idle",
+    lastRefresh: null,
+    nextRefresh: null,
+    retryCount: 0,
+    error: null,
+  };
+
   constructor() {
     this.initializeAuth();
+    this.setupTokenRefreshCallback();
   }
 
   private initializeAuth(): void {
     const token = this.getStoredToken();
     if (token) {
-      apiService.setAuthToken(token);
+      // 🔍 Validate token before using
+      if (isTokenValid(token)) {
+        apiService.setAuthToken(token);
+        this.scheduleTokenRefresh(token);
+
+        if (process.env.NODE_ENV === "development") {
+          debugToken(token, "Initialized Auth Token");
+        }
+      } else {
+        console.log("🗑️ Stored token is invalid, clearing...");
+        this.clearAuthData();
+      }
     }
+  }
+
+  /**
+   * 📞 Setup callback for API service to handle token refresh
+   */
+  private setupTokenRefreshCallback(): void {
+    apiService.setTokenRefreshCallback(async (currentToken: string | null) => {
+      return await this.handleTokenRefresh(currentToken);
+    });
   }
 
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
@@ -44,15 +86,34 @@ class AuthService {
       );
 
       // Adapt backend response to frontend format
+      const responseData = response.data || response;
+      const token = responseData.token || responseData.accessToken;
+
+      console.log("🔧 Login: Received token from backend", {
+        hasToken: !!token,
+        tokenLength: token?.length || 0,
+        tokenPreview: token ? `${token.substring(0, 50)}...` : "null",
+        fullResponse: response,
+        responseData,
+      });
+
       const authResponse: AuthResponse = {
-        user: response.user || response.data?.user,
-        token: response.token || response.data?.token,
-        refreshToken:
-          response.refreshToken || response.data?.refreshToken || "",
-        expiresIn: response.expiresIn || response.data?.expiresIn || 3600,
+        user: responseData.user,
+        token: token,
+        refreshToken: responseData.refreshToken || "",
+        expiresIn: responseData.expiresIn || 3600,
       };
 
+      console.log("🔧 Login: About to call handleAuthSuccess", {
+        authResponse,
+        hasToken: !!authResponse.token,
+        hasUser: !!authResponse.user,
+      });
+
       await this.handleAuthSuccess(authResponse);
+
+      console.log("🔧 Login: handleAuthSuccess completed");
+
       return authResponse;
     } catch (error: any) {
       console.error("Login error:", error);
@@ -76,15 +137,24 @@ class AuthService {
       );
 
       // Adapt backend response to frontend format
+      const responseData = response.data || response;
       const authResponse: AuthResponse = {
-        user: response.user || response.data?.user,
-        token: response.token || response.data?.token,
-        refreshToken:
-          response.refreshToken || response.data?.refreshToken || "",
-        expiresIn: response.expiresIn || response.data?.expiresIn || 3600,
+        user: responseData.user,
+        token: responseData.token || responseData.accessToken,
+        refreshToken: responseData.refreshToken || "",
+        expiresIn: responseData.expiresIn || 3600,
       };
 
+      console.log("🔧 Login: About to call handleAuthSuccess", {
+        authResponse,
+        hasToken: !!authResponse.token,
+        hasUser: !!authResponse.user,
+      });
+
       await this.handleAuthSuccess(authResponse);
+
+      console.log("🔧 Login: handleAuthSuccess completed");
+
       return authResponse;
     } catch (error: any) {
       console.error("Registration error:", error);
@@ -165,17 +235,51 @@ class AuthService {
 
   async getCurrentUser(): Promise<User | null> {
     try {
-      const response = await apiService.get<any>(apiConfig.ENDPOINTS.AUTH.ME);
+      // 🔍 First, try to get user from localStorage
+      const storedUser = this.getStoredUser();
+      const storedToken = this.getStoredToken();
 
-      const user = response.user || response.data?.user || response;
-      if (user) {
-        this.storeUser(user);
-        return user;
+      // If we have both user and valid token, return stored user
+      if (storedUser && storedToken && isTokenValid(storedToken)) {
+        console.log("📦 Using stored user data");
+        return storedUser;
+      }
+
+      // 📞 Try to fetch from backend (optional endpoint)
+      try {
+        const response = await apiService.get<any>(apiConfig.ENDPOINTS.AUTH.ME);
+        const responseData = response.data || response;
+        const user = responseData.user || responseData;
+
+        if (user) {
+          this.storeUser(user);
+          console.log("🌐 Fetched user from backend");
+          return user;
+        }
+      } catch (apiError: any) {
+        console.warn(
+          "⚠️ /me endpoint not available or failed:",
+          apiError.message
+        );
+
+        // If /me endpoint fails but we have stored user, use it
+        if (storedUser && storedToken) {
+          console.log("📦 Falling back to stored user data");
+          return storedUser;
+        }
       }
 
       return null;
     } catch (error) {
       console.error("Get current user error:", error);
+
+      // 📦 Last resort: try stored user
+      const storedUser = this.getStoredUser();
+      if (storedUser) {
+        console.log("📦 Emergency fallback to stored user");
+        return storedUser;
+      }
+
       return null;
     }
   }
@@ -185,6 +289,20 @@ class AuthService {
     this.storeRefreshToken(authData.refreshToken);
     this.storeUser(authData.user);
     apiService.setAuthToken(authData.token);
+
+    // 🔄 Schedule automatic token refresh
+    this.scheduleTokenRefresh(authData.token);
+
+    // 📊 Update refresh status
+    this.refreshStatus = {
+      state: "success",
+      lastRefresh: new Date(),
+      nextRefresh: getNextRefreshTime(authData.token),
+      retryCount: 0,
+      error: null,
+    };
+
+    console.log("✅ Auth success, token refresh scheduled");
   }
 
   private storeToken(token: string): void {
@@ -221,6 +339,20 @@ class AuthService {
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
     apiService.removeAuthToken();
+
+    // 🗑️ Clear refresh timer
+    this.clearRefreshTimer();
+
+    // 📊 Reset refresh status
+    this.refreshStatus = {
+      state: "idle",
+      lastRefresh: null,
+      nextRefresh: null,
+      retryCount: 0,
+      error: null,
+    };
+
+    console.log("🗑️ Auth data cleared, refresh timer stopped");
   }
 
   isAuthenticated(): boolean {
@@ -250,14 +382,21 @@ class AuthService {
   }
 
   // Update user profile
-  async updateProfile(updateData: UpdateProfileRequest): Promise<User> {
+  async updateProfile(updateData: Partial<User>): Promise<User> {
     try {
-      const response = await apiService.put<any>(
+      console.log("🔧 UpdateProfile: Starting update", {
+        updateData,
+        hasStoredToken: !!this.getStoredToken(),
+        storedTokenPreview: this.getStoredToken()?.substring(0, 50) + "...",
+      });
+
+      const response = await apiService.patch<any>(
         apiConfig.ENDPOINTS.AUTH.UPDATE,
         updateData
       );
 
-      const user = response.user || response.data?.user || response;
+      const responseData = response.data || response;
+      const user = responseData.user || responseData;
       if (user) {
         this.storeUser(user);
         return user;
@@ -272,6 +411,151 @@ class AuthService {
           "Failed to update profile"
       );
     }
+  }
+
+  // 🔄 TOKEN REFRESH METHODS
+
+  /**
+   * 🔄 Handle token refresh (called by API service)
+   */
+  private async handleTokenRefresh(
+    currentToken: string | null
+  ): Promise<string | null> {
+    if (!currentToken) return null;
+
+    this.refreshStatus.state = "refreshing";
+
+    try {
+      const refreshToken = this.getStoredRefreshToken();
+      if (!refreshToken) {
+        throw new Error("No refresh token available");
+      }
+
+      console.log("🔄 Calling refresh token endpoint...");
+
+      // 📞 Call backend refresh endpoint
+      const response = await this.callRefreshEndpoint(refreshToken);
+
+      if (response) {
+        // ✅ Success: store new tokens
+        this.storeToken(response.token);
+        if (response.refreshToken) {
+          this.storeRefreshToken(response.refreshToken);
+        }
+
+        // 🔄 Schedule next refresh
+        this.scheduleTokenRefresh(response.token);
+
+        // 📊 Update status
+        this.refreshStatus = {
+          state: "success",
+          lastRefresh: new Date(),
+          nextRefresh: getNextRefreshTime(response.token),
+          retryCount: 0,
+          error: null,
+        };
+
+        console.log("✅ Token refresh successful");
+        return response.token;
+      } else {
+        throw new Error("Refresh endpoint returned null");
+      }
+    } catch (error: any) {
+      console.error("❌ Token refresh failed:", error);
+
+      // 📊 Update status
+      this.refreshStatus = {
+        state: "failed",
+        lastRefresh: this.refreshStatus.lastRefresh,
+        nextRefresh: null,
+        retryCount: this.refreshStatus.retryCount + 1,
+        error: error.message,
+      };
+
+      // 🚫 If refresh fails, clear auth data (user needs to login)
+      this.clearAuthData();
+      return null;
+    }
+  }
+
+  /**
+   * 📞 Call the refresh token endpoint
+   */
+  private async callRefreshEndpoint(
+    refreshToken: string
+  ): Promise<RefreshTokenResponse | null> {
+    try {
+      // 🚫 Don't use the regular API service to avoid infinite loops
+      const response = await fetch(`${apiService["baseURL"]}/auth/refresh`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // 🔄 Adapt response format
+      return {
+        token: data.token || data.accessToken,
+        refreshToken: data.refreshToken,
+        expiresIn: data.expiresIn || 900, // Default 15 minutes
+      };
+    } catch (error) {
+      console.error("❌ Refresh endpoint call failed:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * ⏰ Schedule automatic token refresh
+   */
+  private scheduleTokenRefresh(token: string): void {
+    this.clearRefreshTimer();
+
+    const nextRefreshTime = getNextRefreshTime(token);
+    if (!nextRefreshTime) return;
+
+    const now = new Date();
+    const delay = nextRefreshTime.getTime() - now.getTime();
+
+    if (delay > 0) {
+      console.log(
+        `⏰ Token refresh scheduled in ${Math.round(delay / 1000 / 60)} minutes`
+      );
+
+      this.refreshTimer = setTimeout(async () => {
+        console.log("⏰ Scheduled refresh triggered");
+        await this.handleTokenRefresh(token);
+      }, delay);
+
+      this.refreshStatus.nextRefresh = nextRefreshTime;
+    } else {
+      console.log("⚠️ Token expires soon, should refresh immediately");
+    }
+  }
+
+  /**
+   * 🗑️ Clear refresh timer
+   */
+  private clearRefreshTimer(): void {
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+      this.refreshTimer = null;
+    }
+  }
+
+  /**
+   * 📊 Get current refresh status (for debugging)
+   */
+  getRefreshStatus(): TokenRefreshStatus {
+    return { ...this.refreshStatus };
   }
 }
 

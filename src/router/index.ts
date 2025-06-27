@@ -3,15 +3,12 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
 
-// Lazy load views for better performance
 const LoginView = () => import("@/views/auth/LoginView.vue");
 const RegisterView = () => import("@/views/auth/RegisterView.vue");
 const ForgotPasswordView = () => import("@/views/auth/ForgotPasswordView.vue");
-
-// Placeholder for future views
-const DashboardView = () => import("@/views/DashboardView.vue");
-const ChatView = () => import("@/views/ChatView.vue");
+const ChatView = () => import("@/views/DashboardView.vue");
 const ProfileView = () => import("@/views/ProfileView.vue");
+const TestView = () => import("@/views/TestView.vue");
 
 const routes = [
   {
@@ -49,9 +46,9 @@ const routes = [
     },
   },
   {
-    path: "/dashboard",
+    path: "/chat",
     name: "Dashboard",
-    component: DashboardView,
+    component: ChatView,
     meta: {
       requiresAuth: true,
       title: "Dashboard - ChatApp",
@@ -59,13 +56,13 @@ const routes = [
     },
   },
   {
-    path: "/chat/:id?",
-    name: "Chat",
-    component: ChatView,
+    path: "/test",
+    name: "Test",
+    component: TestView,
     meta: {
       requiresAuth: true,
-      title: "Chat - ChatApp",
-      description: "Conversa em tempo real",
+      title: "Test - ChatApp",
+      description: "Test view",
     },
   },
   {
@@ -78,16 +75,6 @@ const routes = [
       description: "Gerencie seu perfil",
     },
   },
-  // {
-  //   path: "/reset-password/:token",
-  //   name: "ResetPassword",
-  //   component: () => import("@/views/auth/ResetPasswordView.vue"),
-  //   meta: {
-  //     requiresGuest: true,
-  //     title: "Redefinir Senha - ChatApp",
-  //     description: "Defina uma nova senha para sua conta",
-  //   },
-  // },
   // 404 page
   {
     path: "/:pathMatch(.*)*",
@@ -104,26 +91,21 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    // Mobile-friendly scroll behavior
     if (savedPosition) {
       return savedPosition;
     }
 
-    // Scroll to top for new routes
     if (to.name !== from.name) {
       return { top: 0, behavior: "smooth" };
     }
 
-    // Preserve scroll position for same route
     return {};
   },
 });
 
-// Navigation guards
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
 
-  // Update page title and meta description
   if (to.meta.title) {
     document.title = to.meta.title as string;
   }
@@ -135,7 +117,6 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-  // Initialize auth if not already done
   if (!authStore.isAuthenticated && !authStore.isLoading) {
     try {
       await authStore.initializeAuth();
@@ -144,9 +125,7 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-  // Check authentication requirements
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    // Redirect to login with return URL
     next({
       name: "Login",
       query: { redirect: to.fullPath },
@@ -154,10 +133,8 @@ router.beforeEach(async (to, from, next) => {
     return;
   }
 
-  // Check guest requirements (redirect authenticated users)
   if (to.meta.requiresGuest && authStore.isAuthenticated) {
-    // Redirect to dashboard or intended destination
-    const redirectTo = (to.query.redirect as string) || "/dashboard";
+    const redirectTo = (to.query.redirect as string) || "/chat";
     next(redirectTo);
     return;
   }
@@ -165,25 +142,19 @@ router.beforeEach(async (to, from, next) => {
   next();
 });
 
-// After navigation
 router.afterEach((to, from) => {
-  // Mobile-specific: Update viewport meta tag for different pages
   const viewport = document.querySelector('meta[name="viewport"]');
   if (viewport) {
-    // Adjust viewport for different page types
     if (to.name === "Chat") {
-      // Prevent zoom on chat input focus
       viewport.setAttribute(
         "content",
         "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
       );
     } else {
-      // Default viewport
       viewport.setAttribute("content", "width=device-width, initial-scale=1.0");
     }
   }
 
-  // Track page views (placeholder for analytics)
   if (typeof gtag !== "undefined") {
     gtag("config", "GA_MEASUREMENT_ID", {
       page_title: to.meta.title,
@@ -200,22 +171,17 @@ router.afterEach((to, from) => {
   }
 });
 
-// Handle network status changes
 if ("serviceWorker" in navigator) {
   window.addEventListener("online", () => {
-    // Retry failed requests when back online
     console.log("Back online");
   });
 
   window.addEventListener("offline", () => {
-    // Show offline indicator
     console.log("Gone offline");
   });
 }
 
-// Mobile-specific: Handle back button
 router.beforeResolve((to, from, next) => {
-  // Prevent back navigation to auth pages when authenticated
   const authStore = useAuthStore();
 
   if (
@@ -224,8 +190,7 @@ router.beforeResolve((to, from, next) => {
     from.name &&
     !["Login", "Register", "ForgotPassword"].includes(from.name as string)
   ) {
-    // User is trying to go back to auth pages while authenticated
-    next("/dashboard");
+    next("/chat");
     return;
   }
 
