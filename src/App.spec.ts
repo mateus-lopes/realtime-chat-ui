@@ -24,24 +24,13 @@ describe("App.vue", () => {
 
     mockUseAuth.mockReturnValue({
       initializeAuth: jest.fn(),
-      user: { value: null },
-      isAuthenticated: { value: false },
-      isLoading: { value: false },
-      error: { value: null },
-      userName: { value: "" },
-      userEmail: { value: "" },
-      userAvatar: { value: "" },
-      isOnline: { value: false },
       login: jest.fn(),
       register: jest.fn(),
       forgotPassword: jest.fn(),
       resetPassword: jest.fn(),
       logout: jest.fn(),
-      clearError: jest.fn(),
       requireAuth: jest.fn(),
       requireGuest: jest.fn(),
-      setOnlineStatus: jest.fn(),
-      updateLastSeen: jest.fn(),
     });
   });
 

@@ -3,7 +3,10 @@
     <div class="form-header">
       <div class="icon-wrapper">
         <svg class="lock-icon" viewBox="0 0 24 24" width="48" height="48">
-          <path fill="currentColor" d="M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10A2,2 0 0,1 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
+          <path
+            fill="currentColor"
+            d="M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10A2,2 0 0,1 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"
+          />
         </svg>
       </div>
       <h2 class="form-title">Esqueci minha senha</h2>
@@ -34,19 +37,22 @@
     <div v-else class="success-message">
       <div class="success-icon">
         <svg viewBox="0 0 24 24" width="64" height="64">
-          <path fill="currentColor" d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5L18,9.5L16.59,8.09L11,13.67L7.41,10.09L6,11.5L11,16.5Z"/>
+          <path
+            fill="currentColor"
+            d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5L18,9.5L16.59,8.09L11,13.67L7.41,10.09L6,11.5L11,16.5Z"
+          />
         </svg>
       </div>
       <h3 class="success-title">E-mail enviado!</h3>
       <p class="success-text">
-        Enviamos um link de redefinição de senha para 
+        Enviamos um link de redefinição de senha para
         <strong>{{ formState.email.value }}</strong>
       </p>
       <p class="success-instructions">
-        Verifique sua caixa de entrada e siga as instruções no e-mail. 
-        Se não encontrar o e-mail, verifique sua pasta de spam.
+        Verifique sua caixa de entrada e siga as instruções no e-mail. Se não
+        encontrar o e-mail, verifique sua pasta de spam.
       </p>
-      
+
       <div class="resend-section">
         <p class="resend-text">Não recebeu o e-mail?</p>
         <MobileButton
@@ -56,7 +62,11 @@
           :disabled="resendCooldown > 0"
           @click="handleResend"
         >
-          {{ resendCooldown > 0 ? `Reenviar em ${resendCooldown}s` : 'Reenviar e-mail' }}
+          {{
+            resendCooldown > 0
+              ? `Reenviar em ${resendCooldown}s`
+              : "Reenviar e-mail"
+          }}
         </MobileButton>
       </div>
     </div>
@@ -82,7 +92,7 @@
         full-width
         @click="goBack"
       >
-        {{ emailSent ? 'Voltar ao login' : 'Voltar' }}
+        {{ emailSent ? "Voltar ao login" : "Voltar" }}
       </MobileButton>
     </div>
 
@@ -93,13 +103,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useForm } from '@/composables/useForm';
-import { useAuth } from '@/composables/useAuth';
-import MobileInput from '@/components/ui/MobileInput.vue';
-import MobileButton from '@/components/ui/MobileButton.vue';
-import type { ForgotPasswordRequest } from '@/types/auth.types';
+import { ref, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
+import { useForm } from "@/composables/useForm";
+import { useAuth } from "@/composables/useAuth";
+import MobileInput from "@/components/ui/MobileInput.vue";
+import MobileButton from "@/components/ui/MobileButton.vue";
+import type { ForgotPasswordRequest } from "@/types/auth.types";
 
 const router = useRouter();
 const { forgotPassword } = useAuth();
@@ -109,17 +119,17 @@ const resendCooldown = ref(0);
 let resendTimer: NodeJS.Timeout | null = null;
 
 const initialValues: ForgotPasswordRequest = {
-  email: ''
+  email: "",
 };
 
 const validationRules = {
   email: [
-    { required: true, message: 'E-mail é obrigatório' },
-    { 
-      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 
-      message: 'E-mail inválido' 
-    }
-  ]
+    { required: true, message: "E-mail é obrigatório" },
+    {
+      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      message: "E-mail inválido",
+    },
+  ],
 };
 
 const {
@@ -129,7 +139,7 @@ const {
   isValid,
   setTouched,
   handleSubmit: handleFormSubmit,
-  clearErrors
+  clearErrors,
 } = useForm(initialValues, validationRules);
 
 const handleSubmit = () => {
@@ -142,19 +152,19 @@ const handleSubmit = () => {
 
 const handleResend = async () => {
   if (resendCooldown.value > 0) return;
-  
+
   try {
     clearErrors();
     await forgotPassword({ email: formState.email.value });
     startResendCooldown();
   } catch (error) {
-    console.error('Resend error:', error);
+    console.error("Resend error:", error);
   }
 };
 
 const startResendCooldown = () => {
   resendCooldown.value = 60; // 60 seconds cooldown
-  
+
   resendTimer = setInterval(() => {
     resendCooldown.value--;
     if (resendCooldown.value <= 0) {
@@ -166,7 +176,7 @@ const startResendCooldown = () => {
 
 const goBack = () => {
   if (emailSent.value) {
-    router.push('/login');
+    router.push("/login");
   } else {
     router.back();
   }
@@ -294,7 +304,6 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-bottom: 2rem;
 }
 
 .error-message {
@@ -313,16 +322,16 @@ onUnmounted(() => {
   .forgot-password-form {
     padding: 1rem 0.5rem;
   }
-  
+
   .form-title {
     font-size: 1.5rem;
   }
-  
+
   .icon-wrapper svg {
     width: 40px;
     height: 40px;
   }
-  
+
   .success-icon svg {
     width: 56px;
     height: 56px;

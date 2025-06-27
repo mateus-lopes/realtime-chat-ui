@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+
 /* Mobile-first CSS Reset and Base Styles */
 * {
   box-sizing: border-box;

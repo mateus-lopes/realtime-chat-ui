@@ -11,7 +11,6 @@ import { useAuth } from "@/composables/useAuth";
 const { initializeAuth } = useAuth();
 
 onMounted(async () => {
-  // Initialize authentication on app start
   await initializeAuth();
 });
 </script>

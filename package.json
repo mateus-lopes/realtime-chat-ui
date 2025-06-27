@@ -21,16 +21,21 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.26",
     "@vue/test-utils": "^2.4.0-alpha.2",
+    "autoprefixer": "^10.4.21",
     "babel-jest": "^26.6.3",
     "jest": "^26.6.3",
     "jsdom": "^26.1.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "vue": "^3.5.16",
     "vue-jest": "^5.0.0-alpha.10"
   },
   "dependencies": {
+    "jwt-decode": "^4.0.0",
     "pinia": "^3.0.2",
+    "tailwind": "^4.0.0",
     "vue-router": "^4.5.1"
   }
 }

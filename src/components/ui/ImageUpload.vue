@@ -12,11 +12,14 @@
         class="file-input"
         :disabled="uploading"
       />
-      
+
       <div v-if="!preview && !uploading" class="upload-placeholder">
         <div class="upload-icon">
           <svg viewBox="0 0 24 24" width="48" height="48">
-            <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+            <path
+              fill="currentColor"
+              d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"
+            />
           </svg>
         </div>
         <p class="upload-text">
@@ -31,12 +34,18 @@
         <div class="preview-overlay">
           <button @click="removeImage" class="remove-btn" type="button">
             <svg viewBox="0 0 24 24" width="20" height="20">
-              <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+              <path
+                fill="currentColor"
+                d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
+              />
             </svg>
           </button>
           <button @click="triggerFileSelect" class="change-btn" type="button">
             <svg viewBox="0 0 24 24" width="20" height="20">
-              <path fill="currentColor" d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"/>
+              <path
+                fill="currentColor"
+                d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"
+              />
             </svg>
           </button>
         </div>
@@ -45,12 +54,25 @@
       <div v-if="uploading" class="uploading-state">
         <div class="upload-spinner">
           <svg viewBox="0 0 24 24" width="32" height="32" class="spinner">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="31.416" stroke-dashoffset="31.416"/>
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="2"
+              fill="none"
+              stroke-linecap="round"
+              stroke-dasharray="31.416"
+              stroke-dashoffset="31.416"
+            />
           </svg>
         </div>
         <p class="uploading-text">Processando imagem...</p>
         <div class="progress-bar">
-          <div class="progress-fill" :style="{ width: `${uploadProgress}%` }"></div>
+          <div
+            class="progress-fill"
+            :style="{ width: `${uploadProgress}%` }"
+          ></div>
         </div>
       </div>
     </div>
@@ -62,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 
 interface Props {
   modelValue?: string;
@@ -72,29 +94,29 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   maxSize: 5,
-  disabled: false
+  disabled: false,
 });
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string];
-  'upload': [file: File];
-  'remove': [];
+  "update:modelValue": [value: string];
+  upload: [file: File];
+  remove: [];
 }>();
 
 const fileInput = ref<HTMLInputElement>();
-const preview = ref<string>(props.modelValue || '');
+const preview = ref<string>(props.modelValue || "");
 const uploading = ref(false);
 const uploadProgress = ref(0);
-const error = ref<string>('');
+const error = ref<string>("");
 const isDragOver = ref(false);
 
 const maxSizeBytes = computed(() => props.maxSize * 1024 * 1024);
 
 const validateFile = (file: File): boolean => {
-  error.value = '';
+  error.value = "";
 
-  if (!file.type.startsWith('image/')) {
-    error.value = 'Por favor, selecione apenas arquivos de imagem';
+  if (!file.type.startsWith("image/")) {
+    error.value = "Por favor, selecione apenas arquivos de imagem";
     return false;
   }
 
@@ -115,7 +137,7 @@ const processFile = async (file: File) => {
   try {
     // Convert to base64
     const base64 = await fileToBase64(file);
-    
+
     // Simulate upload progress
     const progressInterval = setInterval(() => {
       uploadProgress.value += 10;
@@ -127,14 +149,14 @@ const processFile = async (file: File) => {
     // Set preview
     preview.value = base64;
     uploadProgress.value = 100;
-    
-    emit('update:modelValue', base64);
-    emit('upload', file);
+
+    emit("update:modelValue", base64);
+    emit("upload", file);
 
     clearInterval(progressInterval);
   } catch (err) {
-    error.value = 'Erro ao processar imagem';
-    console.error('Image processing error:', err);
+    error.value = "Erro ao processar imagem";
+    console.error("Image processing error:", err);
   } finally {
     uploading.value = false;
     uploadProgress.value = 0;
@@ -171,7 +193,7 @@ const handleDragLeave = (event: DragEvent) => {
 const handleDrop = (event: DragEvent) => {
   event.preventDefault();
   isDragOver.value = false;
-  
+
   const file = event.dataTransfer?.files[0];
   if (file) {
     processFile(file);
@@ -183,13 +205,13 @@ const triggerFileSelect = () => {
 };
 
 const removeImage = () => {
-  preview.value = '';
-  error.value = '';
+  preview.value = "";
+  error.value = "";
   if (fileInput.value) {
-    fileInput.value.value = '';
+    fileInput.value.value = "";
   }
-  emit('update:modelValue', '');
-  emit('remove');
+  emit("update:modelValue", "");
+  emit("remove");
 };
 </script>
 
@@ -235,6 +257,10 @@ const removeImage = () => {
 
 .upload-placeholder {
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .upload-icon {
@@ -275,6 +301,9 @@ const removeImage = () => {
   object-fit: cover;
   border-radius: 0.75rem;
   border: 2px solid rgba(255, 255, 255, 0.2);
+  max-width: 120px;
+  max-height: 120px;
+  display: block;
 }
 
 .preview-overlay {
@@ -379,12 +408,14 @@ const removeImage = () => {
   .upload-area {
     padding: 1.5rem;
   }
-  
+
   .preview-image {
     width: 100px;
     height: 100px;
+    max-width: 100px;
+    max-height: 100px;
   }
-  
+
   .upload-icon svg {
     width: 40px;
     height: 40px;
