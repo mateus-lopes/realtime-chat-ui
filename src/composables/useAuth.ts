@@ -1,33 +1,34 @@
-// Auth Composable for Mobile-First Chat App
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth.store";
+import type {
+  LoginCredentials,
+  RegisterCredentials,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+} from "@/types/auth.types";
 
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/auth.store';
-import type { LoginCredentials, RegisterCredentials, ForgotPasswordRequest, ResetPasswordRequest } from '@/types/auth.types';
-
+/**
+ * Composable mínimo para autenticação
+ * Mantém apenas funções que agregam valor real:
+ * - Lógica de redirecionamento após ações
+ * - Guards de navegação
+ * - Inicialização
+ *
+ * Para acessar dados simples, use diretamente a store:
+ * const authStore = useAuthStore();
+ * const userName = authStore.userName;
+ */
 export function useAuth() {
   const authStore = useAuthStore();
   const router = useRouter();
 
-  // Computed properties
-  const user = computed(() => authStore.user);
-  const isAuthenticated = computed(() => authStore.isAuthenticated);
-  const isLoading = computed(() => authStore.isLoading);
-  const error = computed(() => authStore.error);
-  const userName = computed(() => authStore.userName);
-  const userEmail = computed(() => authStore.userEmail);
-  const userAvatar = computed(() => authStore.userAvatar);
-  const isOnline = computed(() => authStore.isOnline);
-
-  // Auth actions
   const login = async (credentials: LoginCredentials) => {
     try {
       await authStore.login(credentials);
-      // Redirect to dashboard or intended route after successful login
-      const redirectTo = router.currentRoute.value.query.redirect as string || '/dashboard';
+      const redirectTo =
+        (router.currentRoute.value.query.redirect as string) || "/chat";
       await router.push(redirectTo);
     } catch (error) {
-      // Error is already handled in store
       throw error;
     }
   };
@@ -35,10 +36,8 @@ export function useAuth() {
   const register = async (credentials: RegisterCredentials) => {
     try {
       await authStore.register(credentials);
-      // Redirect to dashboard after successful registration
-      await router.push('/dashboard');
+      await router.push("/chat");
     } catch (error) {
-      // Error is already handled in store
       throw error;
     }
   };
@@ -46,7 +45,6 @@ export function useAuth() {
   const forgotPassword = async (request: ForgotPasswordRequest) => {
     try {
       await authStore.forgotPassword(request);
-      // Could redirect to a success page or show success message
     } catch (error) {
       throw error;
     }
@@ -55,8 +53,7 @@ export function useAuth() {
   const resetPassword = async (request: ResetPasswordRequest) => {
     try {
       await authStore.resetPassword(request);
-      // Redirect to login page after successful password reset
-      await router.push('/login');
+      await router.push("/login");
     } catch (error) {
       throw error;
     }
@@ -65,25 +62,19 @@ export function useAuth() {
   const logout = async () => {
     try {
       await authStore.logout();
-      // Redirect to login page after logout
-      await router.push('/login');
+      await router.push("/login");
     } catch (error) {
-      console.error('Logout error:', error);
-      // Force redirect even if logout fails
-      await router.push('/login');
+      console.error("Logout error:", error);
+      await router.push("/login");
     }
   };
 
-  const clearError = () => {
-    authStore.clearError();
-  };
-
-  // Navigation guards helpers
+  // Navigation guards - these add real value
   const requireAuth = () => {
-    if (!isAuthenticated.value) {
+    if (!authStore.isAuthenticated) {
       router.push({
-        path: '/login',
-        query: { redirect: router.currentRoute.value.fullPath }
+        path: "/login",
+        query: { redirect: router.currentRoute.value.fullPath },
       });
       return false;
     }
@@ -91,55 +82,31 @@ export function useAuth() {
   };
 
   const requireGuest = () => {
-    if (isAuthenticated.value) {
-      router.push('/dashboard');
+    if (authStore.isAuthenticated) {
+      router.push("/chat");
       return false;
     }
     return true;
   };
 
-  // Mobile-specific helpers
-  const setOnlineStatus = (online: boolean) => {
-    authStore.setOnlineStatus(online);
-  };
-
-  const updateLastSeen = () => {
-    authStore.updateLastSeen();
-  };
-
-  // Initialize auth on app start
+  // Initialization - useful for app startup
   const initializeAuth = async () => {
     await authStore.initializeAuth();
   };
 
   return {
-    // State
-    user,
-    isAuthenticated,
-    isLoading,
-    error,
-    userName,
-    userEmail,
-    userAvatar,
-    isOnline,
-
-    // Actions
+    // Actions with navigation
     login,
     register,
     forgotPassword,
     resetPassword,
     logout,
-    clearError,
 
-    // Navigation helpers
+    // Navigation guards
     requireAuth,
     requireGuest,
 
-    // Mobile helpers
-    setOnlineStatus,
-    updateLastSeen,
-
     // Initialization
-    initializeAuth
+    initializeAuth,
   };
 }

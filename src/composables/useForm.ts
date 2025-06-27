@@ -1,19 +1,22 @@
 // Form Composable for Mobile-First Chat App
 
-import { ref, reactive, computed } from 'vue';
-import type { FormState, FormField, ValidationRule } from '@/types/auth.types';
+import { ref, reactive, computed } from "vue";
+import type { FormState, ValidationRule } from "@/types/auth.types";
 
-export function useForm<T extends Record<string, any>>(initialValues: T, validationRules: Record<keyof T, ValidationRule[]>) {
+export function useForm<T extends Record<string, any>>(
+  initialValues: T,
+  validationRules: Record<keyof T, ValidationRule[]>
+) {
   // Create reactive form state
   const formState = reactive<FormState>({});
-  
+
   // Initialize form fields
-  Object.keys(initialValues).forEach(key => {
+  Object.keys(initialValues).forEach((key) => {
     formState[key] = {
       value: initialValues[key],
       error: null,
       touched: false,
-      rules: validationRules[key] || []
+      rules: validationRules[key] || [],
     };
   });
 
@@ -22,19 +25,19 @@ export function useForm<T extends Record<string, any>>(initialValues: T, validat
 
   // Computed properties
   const isValid = computed(() => {
-    return Object.values(formState).every(field => !field.error);
+    return Object.values(formState).every((field) => !field.error);
   });
 
   const hasErrors = computed(() => {
-    return Object.values(formState).some(field => field.error);
+    return Object.values(formState).some((field) => field.error);
   });
 
   const touchedFields = computed(() => {
-    return Object.values(formState).filter(field => field.touched);
+    return Object.values(formState).filter((field) => field.touched);
   });
 
   const isDirty = computed(() => {
-    return Object.keys(formState).some(key => {
+    return Object.keys(formState).some((key) => {
       return formState[key].value !== initialValues[key];
     });
   });
@@ -47,7 +50,7 @@ export function useForm<T extends Record<string, any>>(initialValues: T, validat
     field.error = null;
 
     for (const rule of field.rules) {
-      if (rule.required && (!field.value || field.value.trim() === '')) {
+      if (rule.required && (!field.value || field.value.trim() === "")) {
         field.error = rule.message;
         return false;
       }
@@ -78,8 +81,8 @@ export function useForm<T extends Record<string, any>>(initialValues: T, validat
 
   const validateForm = (): boolean => {
     let isFormValid = true;
-    
-    Object.keys(formState).forEach(fieldName => {
+
+    Object.keys(formState).forEach((fieldName) => {
       const fieldValid = validateField(fieldName);
       if (!fieldValid) {
         isFormValid = false;
@@ -116,14 +119,14 @@ export function useForm<T extends Record<string, any>>(initialValues: T, validat
   };
 
   const clearErrors = () => {
-    Object.keys(formState).forEach(fieldName => {
+    Object.keys(formState).forEach((fieldName) => {
       formState[fieldName].error = null;
     });
     submitError.value = null;
   };
 
   const resetForm = () => {
-    Object.keys(formState).forEach(fieldName => {
+    Object.keys(formState).forEach((fieldName) => {
       formState[fieldName].value = initialValues[fieldName];
       formState[fieldName].error = null;
       formState[fieldName].touched = false;
@@ -135,16 +138,18 @@ export function useForm<T extends Record<string, any>>(initialValues: T, validat
   // Get form values
   const getValues = (): T => {
     const values = {} as T;
-    Object.keys(formState).forEach(key => {
+    Object.keys(formState).forEach((key) => {
       values[key as keyof T] = formState[key].value;
     });
     return values;
   };
 
   // Handle form submission
-  const handleSubmit = async (onSubmit: (values: T) => Promise<void> | void) => {
+  const handleSubmit = async (
+    onSubmit: (values: T) => Promise<void> | void
+  ) => {
     // Mark all fields as touched
-    Object.keys(formState).forEach(fieldName => {
+    Object.keys(formState).forEach((fieldName) => {
       setTouched(fieldName, true);
     });
 
@@ -157,7 +162,7 @@ export function useForm<T extends Record<string, any>>(initialValues: T, validat
       submitError.value = null;
       await onSubmit(getValues());
     } catch (error: any) {
-      submitError.value = error.message || 'An error occurred';
+      submitError.value = error.message || "An error occurred";
       throw error;
     } finally {
       isSubmitting.value = false;
@@ -192,7 +197,7 @@ export function useForm<T extends Record<string, any>>(initialValues: T, validat
       touched: field.touched,
       onInput: handleInput(fieldName),
       onBlur: handleBlur(fieldName),
-      onFocus: handleFocus(fieldName)
+      onFocus: handleFocus(fieldName),
     };
   };
 
@@ -223,6 +228,6 @@ export function useForm<T extends Record<string, any>>(initialValues: T, validat
     // Mobile helpers
     handleInput,
     handleBlur,
-    handleFocus
+    handleFocus,
   };
 }
