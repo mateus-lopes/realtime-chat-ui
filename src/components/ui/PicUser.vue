@@ -19,7 +19,7 @@
       </div>
       <div
         v-else
-        class="relative w-28 h-28 rounded-full mb-4 overflow-hidden shadow-lg"
+        class="relative border-2 border-zinc-800 w-28 h-28 rounded-full mb-4 overflow-hidden shadow-lg"
       >
         <img
           :src="userAvatar"
@@ -94,6 +94,7 @@ import ImageUpload from "@/components/ui/ImageUpload.vue";
 import MobileButton from "@/components/ui/MobileButton.vue";
 
 const authStore = useAuthStore();
+const isOnline = computed(() => authStore.isOnline);
 const user = computed(() => authStore.user);
 const userName = computed(() => user.value?.fullName || "User");
 const userAvatar = computed(() => authStore.userAvatar);
