@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import SideMenu from "@/components/layout/SideMenu.vue";
-import SidebarMenu from "@/components/chat/SidebarMenu.vue";
+import SidebarMenu from "@/components/layout/SidebarMenu.vue";
 import ChatArea from "@/components/chat/ChatArea.vue";
 import UserProfile from "@/components/user/UserProfile.vue";
 import { useAuthStore } from "@/stores/auth.store";

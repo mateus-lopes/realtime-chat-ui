@@ -1,15 +1,11 @@
 <template>
   <div class="flex h-screen bg-black">
-    <!-- Sidebar -->
     <div
-      class="bg-zinc-900 border-r border-gray-700 transition-all duration-300 ease-in-out flex flex-col"
-      :class="[
-        isExpanded ? 'w-64' : 'w-16',
-        isMobile && isExpanded ? 'absolute inset-y-0 left-0 z-50' : '',
-      ]"
+      class="bg-black border-r border-zinc-800 transition-all duration-300 ease-in-out flex flex-col"
+      :class="[isExpanded ? 'w-64' : 'w-16']"
     >
-      <!-- Header -->
-      <div class="p-4 border-b border-gray-700">
+      <!-- isExpanded ? 'absolute inset-y-0 left-0 z-50' : '', -->
+      <div class="p-4 border-b border-zinc-800">
         <div class="flex items-center justify-between">
           <div v-if="isExpanded" class="flex items-center gap-3">
             <UserProfileDropdown
@@ -18,7 +14,7 @@
               @starredMessages="handleStarredMessages"
             />
             <span class="text-white font-semibold">
-              {{ authStore.userName }}
+              {{ displayUserName }}
             </span>
           </div>
 
@@ -29,39 +25,17 @@
               @starredMessages="handleStarredMessages"
             />
           </div>
-
-          <button
-            v-if="isExpanded"
-            @click="toggleSidebar"
-            class="p-2 rounded-lg hover:bg-gray-700 transition-colors duration-200"
-          >
-            <svg
-              class="w-5 h-5 text-gray-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
         </div>
       </div>
 
-      <!-- Navigation -->
       <nav class="flex-1 p-2 space-y-1">
-        <!-- Chats -->
         <button
           @click="setActiveSection('chats')"
           class="w-full flex items-center gap-3 p-3 rounded-lg transition-colors duration-200"
           :class="
             activeSection === 'chats'
-              ? 'bg-gray-700 text-white'
-              : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+              ? 'bg-zinc-700 text-white'
+              : 'text-gray-300 hover:bg-zinc-800 hover:text-white'
           "
         >
           <div class="relative">
@@ -90,14 +64,13 @@
           <span v-if="isExpanded" class="font-medium">Conversas</span>
         </button>
 
-        <!-- Status -->
         <button
           @click="setActiveSection('status')"
           class="w-full flex items-center gap-3 p-3 rounded-lg transition-colors duration-200"
           :class="
             activeSection === 'status'
-              ? 'bg-gray-700 text-white'
-              : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+              ? 'bg-zinc-700 text-white'
+              : 'text-gray-300 hover:bg-zinc-800 hover:text-white'
           "
         >
           <div class="relative">
@@ -122,14 +95,13 @@
           <span v-if="isExpanded" class="font-medium">Status</span>
         </button>
 
-        <!-- Channels -->
         <button
           @click="setActiveSection('channels')"
           class="w-full flex items-center gap-3 p-3 rounded-lg transition-colors duration-200"
           :class="
             activeSection === 'channels'
-              ? 'bg-gray-700 text-white'
-              : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+              ? 'bg-zinc-700 text-white'
+              : 'text-gray-300 hover:bg-zinc-800 hover:text-white'
           "
         >
           <svg
@@ -148,14 +120,13 @@
           <span v-if="isExpanded" class="font-medium">Canais</span>
         </button>
 
-        <!-- Communities -->
         <button
           @click="setActiveSection('communities')"
           class="w-full flex items-center gap-3 p-3 rounded-lg transition-colors duration-200"
           :class="
             activeSection === 'communities'
-              ? 'bg-gray-700 text-white'
-              : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+              ? 'bg-zinc-700 text-white'
+              : 'text-gray-300 hover:bg-zinc-800 hover:text-white'
           "
         >
           <svg
@@ -174,17 +145,15 @@
           <span v-if="isExpanded" class="font-medium">Comunidades</span>
         </button>
 
-        <!-- Divider -->
-        <div class="border-t border-gray-700 my-4"></div>
+        <div class="border-t border-zinc-800 my-4"></div>
 
-        <!-- Starred Messages -->
         <button
           @click="setActiveSection('starred')"
           class="w-full flex items-center gap-3 p-3 rounded-lg transition-colors duration-200"
           :class="
             activeSection === 'starred'
-              ? 'bg-gray-700 text-white'
-              : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+              ? 'bg-zinc-700 text-white'
+              : 'text-gray-300 hover:bg-zinc-800 hover:text-white'
           "
         >
           <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -195,14 +164,13 @@
           <span v-if="isExpanded" class="font-medium">Favoritas</span>
         </button>
 
-        <!-- Archived -->
         <button
           @click="setActiveSection('archived')"
           class="w-full flex items-center gap-3 p-3 rounded-lg transition-colors duration-200"
           :class="
             activeSection === 'archived'
-              ? 'bg-gray-700 text-white'
-              : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+              ? 'bg-zinc-700 text-white'
+              : 'text-gray-300 hover:bg-zinc-800 hover:text-white'
           "
         >
           <div class="relative">
@@ -232,50 +200,43 @@
         </button>
       </nav>
 
-      <!-- Footer -->
-      <div class="p-2 border-t border-gray-700">
-        <!-- Settings -->
+      <div class="p-2 border-t border-zinc-800 flex justify-center">
         <button
-          @click="setActiveSection('settings')"
-          class="w-full flex items-center gap-3 p-3 rounded-lg transition-colors duration-200"
-          :class="
-            activeSection === 'settings'
-              ? 'bg-gray-700 text-white'
-              : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-          "
+          @click="toggleSidebar"
+          class="p-2 rounded-lg hover:bg-zinc-800 transition-colors duration-200"
         >
           <svg
-            class="w-6 h-6"
+            class="w-5 h-5 text-gray-300"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            v-if="!isExpanded"
           >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              d="M9 5l7 7-7 7"
             />
+          </svg>
+          <svg
+            class="w-5 h-5 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            v-if="isExpanded"
+          >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              d="M15 19l-7-7 7-7"
             />
           </svg>
-          <span v-if="isExpanded" class="font-medium">Configurações</span>
         </button>
       </div>
     </div>
 
-    <!-- Mobile Overlay -->
-    <div
-      v-if="isMobile && isExpanded"
-      @click="closeSidebar"
-      class="fixed inset-0 bg-black bg-opacity-50 z-40"
-    ></div>
-
-    <!-- Main Content -->
     <div class="flex-1 flex flex-col">
       <slot :activeSection="activeSection" :toggleSidebar="toggleSidebar" />
     </div>
@@ -283,20 +244,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { computed, ref } from "vue";
 import UserProfileDropdown from "@/components/user/UserProfileDropdown.vue";
 import { useAuthStore } from "@/stores/auth.store";
 
 const authStore = useAuthStore();
 
-const isExpanded = ref(true);
+const isExpanded = ref(false);
 const activeSection = ref("chats");
-const isMobile = ref(false);
 
-// Mock data
 const unreadChats = ref(3);
 const newStatus = ref(true);
 const archivedCount = ref(2);
+
+const displayUserName = computed(() => {
+  if (!authStore.userName) return "";
+  const names = authStore.userName.split(" ");
+  return names.slice(0, 2).join(" ");
+});
 
 const emit = defineEmits<{
   sectionChange: [section: string];
@@ -306,19 +271,9 @@ const toggleSidebar = () => {
   isExpanded.value = !isExpanded.value;
 };
 
-const closeSidebar = () => {
-  if (isMobile.value) {
-    isExpanded.value = false;
-  }
-};
-
 const setActiveSection = (section: string) => {
   activeSection.value = section;
   emit("sectionChange", section);
-
-  if (isMobile.value) {
-    isExpanded.value = false;
-  }
 };
 
 const handleEditProfile = () => {
@@ -332,20 +287,4 @@ const handleSettings = () => {
 const handleStarredMessages = () => {
   setActiveSection("starred");
 };
-
-const checkMobile = () => {
-  isMobile.value = window.innerWidth < 768;
-  if (!isMobile.value) {
-    isExpanded.value = true;
-  }
-};
-
-onMounted(() => {
-  checkMobile();
-  window.addEventListener("resize", checkMobile);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("resize", checkMobile);
-});
 </script>

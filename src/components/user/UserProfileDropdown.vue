@@ -1,6 +1,5 @@
 <template>
   <div class="relative" ref="dropdownRef">
-    <!-- User Avatar Button -->
     <button
       @click="toggleDropdown"
       class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-600 hover:border-gray-500 transition-colors duration-200"
@@ -14,13 +13,12 @@
       />
       <div
         v-else
-        class="w-full h-full bg-gray-600 flex items-center justify-center text-white font-medium text-sm"
+        class="w-full h-full bg-zinc-700 flex items-center justify-center text-white font-medium text-sm"
       >
         {{ userInitials }}
       </div>
     </button>
 
-    <!-- Profile Dropdown -->
     <Transition
       enter-active-class="transition ease-out duration-200"
       enter-from-class="opacity-0 scale-95 translate-y-2"
@@ -31,10 +29,12 @@
     >
       <div
         v-if="isOpen"
-        class="absolute top-full left-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-xl border border-gray-700 z-50 overflow-hidden"
+        class="absolute top-full left-0 mt-2 w-80 bg-zinc-950 rounded-lg shadow-xl border border-zinc-700 z-50 overflow-hidden"
       >
         <!-- Profile Header -->
-        <div class="p-6 bg-gradient-to-r from-gray-800 to-gray-700">
+        <div
+          class="p-6 bg-gradient-to-r from-green-950 via-blue-950 to-zinc-800"
+        >
           <div class="flex items-center gap-4">
             <div
               class="w-16 h-16 rounded-full overflow-hidden border-2 border-gray-500"
@@ -65,19 +65,16 @@
           </div>
         </div>
 
-        <!-- Profile Content -->
         <div class="p-4 space-y-4">
-          <!-- About Section -->
           <div v-if="userAbout">
             <p class="text-gray-400 text-xs mb-1">Sobre</p>
             <p class="text-gray-200 text-sm">{{ userAbout }}</p>
           </div>
 
-          <!-- Quick Actions -->
           <div class="space-y-2">
             <button
               @click="handleEditProfile"
-              class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-700 transition-colors duration-150 text-left"
+              class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-800 transition-colors duration-150 text-left"
             >
               <div
                 class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center"
@@ -106,7 +103,7 @@
 
             <button
               @click="handleSettings"
-              class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-700 transition-colors duration-150 text-left"
+              class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-800 transition-colors duration-150 text-left"
             >
               <div
                 class="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center"
@@ -141,7 +138,7 @@
 
             <button
               @click="handleStarredMessages"
-              class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-700 transition-colors duration-150 text-left"
+              class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-zinc-800 transition-colors duration-150 text-left"
             >
               <div
                 class="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center"
@@ -163,10 +160,8 @@
             </button>
           </div>
 
-          <!-- Divider -->
-          <div class="border-t border-gray-700 my-4"></div>
+          <div class="border-t border-zinc-700 my-4"></div>
 
-          <!-- Logout Button -->
           <button
             @click="handleLogout"
             class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-red-900/20 transition-colors duration-150 text-left border border-red-500/20 hover:border-red-500/40"

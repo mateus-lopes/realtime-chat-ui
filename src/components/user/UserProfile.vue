@@ -1,176 +1,141 @@
 <template>
-  <div class="bg-black p-4">
-    <div class="mx-auto max-w-2xl">
-      <!-- Profile Card -->
-      <main
-        class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 flex flex-col items-start gap-6"
-      >
-        <button
-          @click="$emit('close')"
-          class="fixed left-6 top-6 p-2 rounded-lg hover:bg-gray-800 transition-colors duration-200"
-        >
-          <svg
-            class="w-6 h-6 text-gray-300"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-        </button>
-        <!-- User Avatar -->
-        <div class="flex flex-col items-center w-full gap-4">
-          <div class="relative">
-            <div
-              class="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-500"
-            >
-              <img
-                v-if="userAvatar"
-                :src="userAvatar"
-                :alt="userName"
-                class="w-full h-full object-cover"
-              />
-              <div
-                v-else
-                class="w-full h-full bg-gray-600 flex items-center justify-center text-white font-medium text-2xl"
-              >
-                {{ userInitials }}
-              </div>
-            </div>
+  <div class="min-h-screen bg-black flex items-center justify-center p-4">
+    <main class="flex items-start gap-6 w-8/12">
+      <section class="w-1/4">
+        <div class="flex flex-col w-full">
+          <!-- Menu Items -->
+          <div class="space-y-2">
             <button
-              @click="handleChangeAvatar"
-              class="absolute bottom-0 right-0 w-8 h-8 bg-green-600 rounded-full flex items-center justify-center hover:bg-green-700 transition-colors duration-200"
+              @click="activeTab = 'user'"
+              :class="[
+                'w-full flex items-center gap-3 p-3 rounded-lg transition-colors duration-150 text-left',
+                activeTab === 'user'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-300 hover:bg-zinc-800 hover:text-white',
+              ]"
             >
-              <svg
-                class="w-4 h-4 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+              <div
+                :class="[
+                  'w-8 h-8 rounded-full flex items-center justify-center',
+                  activeTab === 'user' ? 'bg-white/20' : 'bg-blue-600',
+                ]"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
+                <svg
+                  class="w-4 h-4"
+                  :class="activeTab === 'user' ? 'text-white' : 'text-white'"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div class="font-medium">Editar perfil</div>
+                <div class="text-xs opacity-70">
+                  Alterar nome, foto e descrição
+                </div>
+              </div>
+            </button>
+
+            <button
+              @click="activeTab = 'settings'"
+              :class="[
+                'w-full flex items-center gap-3 p-3 rounded-lg transition-colors duration-150 text-left',
+                activeTab === 'settings'
+                  ? 'bg-gray-600 text-white'
+                  : 'text-gray-300 hover:bg-zinc-800 hover:text-white',
+              ]"
+            >
+              <div
+                :class="[
+                  'w-8 h-8 rounded-full flex items-center justify-center',
+                  activeTab === 'settings' ? 'bg-white/20' : 'bg-gray-600',
+                ]"
+              >
+                <svg
+                  class="w-4 h-4"
+                  :class="
+                    activeTab === 'settings' ? 'text-white' : 'text-white'
+                  "
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div class="font-medium">Configurações</div>
+                <div class="text-xs opacity-70">Preferências e privacidade</div>
+              </div>
             </button>
           </div>
-
-          <!-- Status Indicator -->
-          <div class="flex items-center gap-2">
-            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span class="text-green-400 text-sm">Online</span>
-          </div>
         </div>
+      </section>
 
-        <!-- User Info -->
-        <div class="w-full space-y-4">
-          <!-- Name -->
-          <div class="space-y-2">
-            <label class="text-white/70 text-xs">Nome</label>
-            <div class="flex items-center gap-2">
-              <input
-                v-if="editingName"
-                v-model="tempName"
-                @blur="saveName"
-                @keydown.enter="saveName"
-                @keydown.escape="cancelEditName"
-                class="flex-1 bg-gray-800 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                ref="nameInput"
-              />
-              <p v-else class="flex-1 text-white text-lg">{{ userName }}</p>
-              <button
-                @click="startEditName"
-                class="p-2 rounded-lg hover:bg-gray-700 transition-colors duration-200"
-              >
-                <svg
-                  class="w-4 h-4 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                  />
-                </svg>
-              </button>
-            </div>
+      <section class="w-3/4 flex flex-col flex-grow gap-2 items-start">
+        <div v-if="activeTab === 'user'" class="w-full space-y-4">
+          <div class="flex items-center gap-6">
+            <pic-user />
+            <status-user />
           </div>
-
-          <!-- About -->
-          <div class="space-y-2">
-            <label class="text-white/70 text-xs">Sobre</label>
-            <div class="flex items-start gap-2">
-              <textarea
-                v-if="editingAbout"
-                v-model="tempAbout"
-                @blur="saveAbout"
-                @keydown.enter.exact="saveAbout"
-                @keydown.escape="cancelEditAbout"
-                class="flex-1 bg-gray-800 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-                rows="3"
-                ref="aboutInput"
-              ></textarea>
-              <p v-else class="flex-1 text-white">
-                {{ userAbout || "Adicione uma descrição..." }}
-              </p>
-              <button
-                @click="startEditAbout"
-                class="p-2 rounded-lg hover:bg-gray-700 transition-colors duration-200 mt-1"
-              >
-                <svg
-                  class="w-4 h-4 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- Email -->
-          <div class="space-y-2">
-            <label class="text-white/70 text-xs">Email</label>
+          <editable-input
+            :value="userName"
+            label=""
+            placeholder="Seu nome"
+            edit-title="Editar nome"
+            @save="(val: string) => saveUserInfo({ key: 'fullName', value: val })"
+          />
+          <editable-input
+            :value="userAbout"
+            label="Descrição"
+            placeholder="Sobre mim..."
+            edit-title="Editar descrição"
+            @save="(val: string) => saveUserInfo({ key: 'about', value: val })"
+          />
+          <div>
+            <p class="text-white/70 text-xs mb-2">Email</p>
             <p class="text-white">{{ userEmail }}</p>
           </div>
+
+          <divider-custom thickness="thin" />
+
+          <div class="flex flex-col gap-4 w-full">
+            <button
+              class="flex items-center w-full py-2 px-4 border rounded bg-white/5 cursor-pointer transition text-sm font-medium border-red-400/30 text-red-500 hover:bg-red-500/10 hover:border-red-500/50"
+              @click="handleLogout"
+            >
+              Sair da Conta
+            </button>
+          </div>
         </div>
 
-        <!-- Divider -->
-        <div class="w-full border-t border-white/10"></div>
-
-        <!-- Actions -->
-        <div class="w-full space-y-3">
-          <button
-            @click="handleSettings"
-            class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-700 transition-colors duration-150 text-left"
+        <div v-else-if="activeTab === 'settings'" class="w-full">
+          <div
+            class="flex flex-col items-center justify-center h-96 text-center"
           >
             <div
-              class="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center"
+              class="w-20 h-20 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center mb-6 shadow-lg"
             >
               <svg
-                class="w-4 h-4 text-white"
+                class="w-10 h-10 text-gray-300"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -189,124 +154,108 @@
                 />
               </svg>
             </div>
-            <span class="text-gray-200 font-medium">Configurações</span>
-          </button>
-
-          <button
-            @click="handleLogout"
-            class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-red-900/20 transition-colors duration-150 text-left border border-red-500/20 hover:border-red-500/40"
-          >
+            <h3 class="text-white text-2xl font-semibold mb-3">
+              Em Desenvolvimento
+            </h3>
+            <p class="text-gray-400 text-base max-w-md leading-relaxed mb-6">
+              As configurações avançadas estão sendo desenvolvidas. Em breve
+              você poderá personalizar suas preferências e configurações de
+              privacidade.
+            </p>
             <div
-              class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center"
+              class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600/20 to-blue-500/20 border border-blue-500/30 rounded-lg"
             >
-              <svg
-                class="w-4 h-4 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+              <span class="text-2xl">🚧</span>
+              <span class="text-blue-400 text-sm font-medium"
+                >Funcionalidade em construção</span
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                />
-              </svg>
             </div>
-            <span class="text-red-400 font-medium">Sair da conta</span>
-          </button>
+
+            <!-- Lista de futuras funcionalidades -->
+            <div class="mt-8">
+              <h4 class="text-gray-300 text-sm font-medium mb-4 text-center">
+                Próximas funcionalidades:
+              </h4>
+              <div class="space-y-2 text-center">
+                <div class="flex items-center gap-3 text-gray-400 text-sm">
+                  <div class="w-2 h-2 bg-gray-600 rounded-full"></div>
+                  <span>Notificações personalizadas</span>
+                </div>
+                <div class="flex items-center gap-3 text-gray-400 text-sm">
+                  <div class="w-2 h-2 bg-gray-600 rounded-full"></div>
+                  <span>Tema e aparência</span>
+                </div>
+                <div class="flex items-center gap-3 text-gray-400 text-sm">
+                  <div class="w-2 h-2 bg-gray-600 rounded-full"></div>
+                  <span>Configurações de privacidade</span>
+                </div>
+                <div class="flex items-center gap-3 text-gray-400 text-sm">
+                  <div class="w-2 h-2 bg-gray-600 rounded-full"></div>
+                  <span>Backup e sincronização</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+    </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick } from "vue";
-import { useAuthStore } from "@/stores/auth.store";
+import { computed, onMounted, ref, watch } from "vue";
 import { useAuth } from "@/composables/useAuth";
+import { useAuthStore } from "@/stores/auth.store";
+import DividerCustom from "@/components/ui/DividerCustom.vue";
+import EditableInput from "@/components/ui/EditableInput.vue";
+import StatusUser from "@/components/ui/StatusUser.vue";
+import PicUser from "@/components/ui/PicUser.vue";
 
+const { logout, requireAuth } = useAuth();
 const authStore = useAuthStore();
-const { logout } = useAuth();
 
-const editingName = ref(false);
-const editingAbout = ref(false);
-const tempName = ref("");
-const tempAbout = ref("");
-const nameInput = ref<HTMLInputElement>();
-const aboutInput = ref<HTMLTextAreaElement>();
+const activeTab = ref<"user" | "settings">("user");
 
-const userName = computed(() => authStore.userName || "Usuário");
-const userEmail = computed(() => authStore.userEmail || "email@exemplo.com");
-const userAvatar = computed(() => authStore.userAvatar);
-const userAbout = computed(() => authStore.userAbout || "");
+const user = computed(() => authStore.user);
+const userName = computed(() => authStore.userName);
+const userAbout = computed(() => authStore.userAbout);
+const userEmail = computed(() => authStore.userEmail);
 
-const userInitials = computed(() => {
-  return userName.value
-    .split(" ")
-    .map((name) => name.charAt(0))
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+const editedUserName = ref(userName.value);
+const editabledAbout = ref(userAbout.value);
+
+watch(userName, (newVal) => {
+  editedUserName.value = newVal;
 });
 
-const emit = defineEmits<{
-  close: [];
-  settings: [];
-}>();
+watch(userAbout, (newVal) => {
+  editabledAbout.value = newVal;
+});
 
-const startEditName = async () => {
-  editingName.value = true;
-  tempName.value = userName.value;
-  await nextTick();
-  nameInput.value?.focus();
-};
+const nameEditing = ref(false);
+const aboutEditing = ref(false);
 
-const saveName = () => {
-  if (tempName.value.trim()) {
-    // Aqui você salvaria no store/backend
-    console.log("Salvando nome:", tempName.value);
+const saveUserInfo = async (param: { key: string; value: any }) => {
+  if (!param.value || !user.value) return;
+  try {
+    await authStore.updateUser({
+      [param.key]: param.value,
+      _id: user.value._id,
+    });
+    if (param.key === "fullName") nameEditing.value = false;
+    if (param.key === "about") aboutEditing.value = false;
+  } catch (error) {
+    alert("Erro ao atualizar informação");
   }
-  editingName.value = false;
 };
 
-const cancelEditName = () => {
-  editingName.value = false;
-  tempName.value = "";
-};
-
-const startEditAbout = async () => {
-  editingAbout.value = true;
-  tempAbout.value = userAbout.value;
-  await nextTick();
-  aboutInput.value?.focus();
-};
-
-const saveAbout = () => {
-  // Aqui você salvaria no store/backend
-  console.log("Salvando sobre:", tempAbout.value);
-  editingAbout.value = false;
-};
-
-const cancelEditAbout = () => {
-  editingAbout.value = false;
-  tempAbout.value = "";
-};
-
-const handleChangeAvatar = () => {
-  // Implementar upload de avatar
-  console.log("Mudando avatar...");
-};
-
-const handleSettings = () => {
-  emit("settings");
-};
+onMounted(() => {
+  requireAuth();
+});
 
 const handleLogout = async () => {
-  try {
+  if (confirm("Tem certeza que deseja sair da sua conta?")) {
     await logout();
-  } catch (error) {
-    console.error("Erro ao fazer logout:", error);
   }
 };
 </script>
