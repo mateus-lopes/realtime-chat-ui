@@ -1,46 +1,72 @@
 <template>
-  <div class="flex h-screen bg-gradient-to-b from-[#020917] to-[#101725]">
-    <SidebarMenu
-      :user="user"
-      :chats="chats"
-      :selectedChatId="selectedChatId"
-      @selectChat="selectChat"
-    />
-    <ChatArea
-      v-if="selectedChat"
-      :chat="selectedChat"
-      :messages="selectedChat.messages"
-      :user="user"
-      @sendMessage="sendMessage"
-    />
-    <div
-      v-else
-      class="flex-1 flex items-center justify-center text-white/60 text-lg"
-    >
-      Selecione uma conversa para começar
-    </div>
-  </div>
+  <SideMenu @sectionChange="handleSectionChange">
+    <template #default="{ activeSection }">
+      <!-- Chat Section -->
+      <div
+        v-if="activeSection === 'chats'"
+        class="flex h-screen bg-gradient-to-b from-[#020917] to-[#101725]"
+      >
+        <SidebarMenu
+          v-if="user"
+          :user="user"
+          :chats="chats"
+          :selectedChatId="selectedChatId"
+          @selectChat="selectChat"
+        />
+        <ChatArea
+          v-if="selectedChat && user"
+          :chat="selectedChat"
+          :messages="selectedChat.messages"
+          :user="user"
+          @sendMessage="sendMessage"
+        />
+        <div
+          v-else
+          class="flex-1 flex items-center justify-center text-white/60 text-lg"
+        >
+          Selecione uma conversa para começar
+        </div>
+      </div>
+
+      <UserProfile
+        v-else-if="activeSection === 'profile'"
+        @close="handleSectionChange('chats')"
+        @settings="handleSectionChange('settings')"
+      />
+
+      <div
+        v-else
+        class="flex-1 flex items-center justify-center bg-black text-white/90 text-lg"
+      >
+        <div class="text-center">
+          <h2 class="text-2xl font-semibold mb-2">
+            {{ getSectionTitle(activeSection) }}
+          </h2>
+          <p>Esta seção está em desenvolvimento</p>
+        </div>
+      </div>
+    </template>
+  </SideMenu>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import SideMenu from "@/components/layout/SideMenu.vue";
 import SidebarMenu from "@/components/chat/SidebarMenu.vue";
 import ChatArea from "@/components/chat/ChatArea.vue";
+import UserProfile from "@/components/user/UserProfile.vue";
+import { useAuthStore } from "@/stores/auth.store";
 
-// Mock user
-const user = ref({
-  id: 1,
-  name: "Mateus Lopes",
-  avatar: "",
-  status: "Online",
-});
+const authStore = useAuthStore();
+const user = computed(() => authStore.user);
 
 // Mock chats
 const chats = ref([
   {
     id: 1,
     name: "João Silva",
-    avatar: "",
+    avatar:
+      "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png",
     lastMessage: "Olá! Como você está?",
     lastTime: "14:30",
     unread: 2,
@@ -85,7 +111,8 @@ const chats = ref([
   {
     id: 2,
     name: "Maria Fernanda",
-    avatar: "",
+    avatar:
+      "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png",
     lastMessage: "Perfeito! Vamos marcar para amanhã então",
     lastTime: "13:45",
     unread: 0,
@@ -94,7 +121,8 @@ const chats = ref([
   {
     id: 3,
     name: "Time ChatApp",
-    avatar: "",
+    avatar:
+      "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png",
     lastMessage: "Bem-vindo ao ChatApp! 🎉",
     lastTime: "12:15",
     unread: 0,
@@ -112,10 +140,10 @@ function selectChat(id: number) {
 }
 
 function sendMessage(message: string) {
-  if (!selectedChat.value) return;
+  if (!selectedChat.value || !user.value) return;
   selectedChat.value.messages.push({
     id: Date.now(),
-    from: user.value.name,
+    from: user.value.fullName,
     text: message,
     time: new Date().toLocaleTimeString([], {
       hour: "2-digit",
@@ -123,6 +151,24 @@ function sendMessage(message: string) {
     }),
     sent: true,
   });
+}
+
+function handleSectionChange(section: string) {
+  console.log("Mudando para seção:", section);
+}
+
+function getSectionTitle(section: string) {
+  const titles: Record<string, string> = {
+    chats: "Conversas",
+    status: "Status",
+    channels: "Canais",
+    communities: "Comunidades",
+    starred: "Mensagens Favoritas",
+    archived: "Conversas Arquivadas",
+    settings: "Configurações",
+    profile: "Perfil",
+  };
+  return titles[section] || "Seção";
 }
 </script>
 

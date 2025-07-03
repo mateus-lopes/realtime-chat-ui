@@ -1,6 +1,6 @@
 <template>
   <li
-    class="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-zinc-950"
+    class="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-zinc-900 transition-colors"
   >
     <img :src="chat.avatar" alt="avatar" class="w-12 h-12 rounded-full" />
     <div class="flex-1 min-w-0">

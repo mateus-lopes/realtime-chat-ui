@@ -1,39 +1,41 @@
 <template>
-  <main
-    class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 flex flex-col items-start gap-2"
-  >
-    <pic-user />
-    <status-user />
-    <editable-input
-      :value="userName"
-      label=""
-      placeholder="Seu nome"
-      edit-title="Editar nome"
-      @save="(val: string) => saveUserInfo({ key: 'fullName', value: val })"
-    />
-    <editable-input
-      :value="userAbout"
-      label="Descrição"
-      placeholder="Sobre mim..."
-      edit-title="Editar descrição"
-      @save="(val: string) => saveUserInfo({ key: 'about', value: val })"
-    />
-    <div>
-      <p class="text-white/70 text-xs mb-2">Email</p>
-      <p class="text-white">{{ userEmail }}</p>
-    </div>
+  <div class="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+    <main
+      class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 flex flex-col items-start gap-2 w-full max-w-md"
+    >
+      <pic-user />
+      <status-user />
+      <editable-input
+        :value="userName"
+        label=""
+        placeholder="Seu nome"
+        edit-title="Editar nome"
+        @save="(val: string) => saveUserInfo({ key: 'fullName', value: val })"
+      />
+      <editable-input
+        :value="userAbout"
+        label="Descrição"
+        placeholder="Sobre mim..."
+        edit-title="Editar descrição"
+        @save="(val: string) => saveUserInfo({ key: 'about', value: val })"
+      />
+      <div>
+        <p class="text-white/70 text-xs mb-2">Email</p>
+        <p class="text-white">{{ userEmail }}</p>
+      </div>
 
-    <divider-custom thickness="thin" />
+      <divider-custom thickness="thin" />
 
-    <div class="flex flex-col gap-4">
-      <button
-        class="flex items-center w-full py-2 px-4 border rounded bg-white/5 cursor-pointer transition text-sm font-medium border-red-400/30 text-red-500 hover:bg-red-500/10 hover:border-red-500/50"
-        @click="handleLogout"
-      >
-        Sair da Conta
-      </button>
-    </div>
-  </main>
+      <div class="flex flex-col gap-4 w-full">
+        <button
+          class="flex items-center w-full py-2 px-4 border rounded bg-white/5 cursor-pointer transition text-sm font-medium border-red-400/30 text-red-500 hover:bg-red-500/10 hover:border-red-500/50"
+          @click="handleLogout"
+        >
+          Sair da Conta
+        </button>
+      </div>
+    </main>
+  </div>
 </template>
 
 <script setup lang="ts">

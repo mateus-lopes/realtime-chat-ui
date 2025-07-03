@@ -1,14 +1,14 @@
 <template>
   <form
-    class="flex items-end gap-2 px-6 py-4 border-t border-zinc-950 bg-black"
+    class="flex items-end gap-2 p-2 px-6 py-4 border-t border-zinc-800 bg-black"
     @submit.prevent="send"
   >
     <button
       type="button"
       @click="toggleEmojiPicker"
-      class="text-white rounded-lg p-2 font-medium hover:bg-zinc-950 transition flex-shrink-0 mb-1"
+      class="text-white rounded-lg px-2 pt-2 pb-1 font-medium hover:bg-zinc-900 transition flex-shrink-0 mb-1"
     >
-      <span class="material-symbols-outlined text-neutral-500"
+      <span class="material-symbols-outlined pt-1 text-neutral-500"
         >emoji_emotions</span
       >
     </button>
@@ -16,9 +16,9 @@
     <button
       type="button"
       @click="openAttachments"
-      class="text-white rounded-lg p-2 font-medium hover:bg-zinc-950 transition flex-shrink-0 mb-1"
+      class="text-white rounded-lg px-2 pt-2 pb-1 font-medium hover:bg-zinc-900 transition flex-shrink-0 mb-1"
     >
-      <span class="material-symbols-outlined text-neutral-500"
+      <span class="material-symbols-outlined pt-1 text-neutral-500"
         >attach_file</span
       >
     </button>
@@ -30,7 +30,7 @@
         @keydown="handleKeydown"
         @input="adjustHeight"
         placeholder="Digite uma mensagem"
-        class="w-full bg-transparent text-white/90 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none transition-all duration-200"
+        class="w-full bg-transparent text-white/90 px-4 pt-4 focus:outline-none resize-none"
         rows="1"
         autocomplete="off"
       ></textarea>
@@ -39,14 +39,14 @@
     <button
       type="submit"
       :disabled="!input.trim()"
-      class="rounded-lg p-2 font-medium transition flex-shrink-0 mb-1"
+      class="rounded-lg p-2 font-medium transition flex-shrink-0"
       :class="
         input.trim()
           ? 'text-white bg-green-600 hover:bg-green-700'
-          : 'text-neutral-500 hover:bg-zinc-950'
+          : 'text-neutral-500 hover:bg-zinc-900'
       "
     >
-      <span class="material-symbols-outlined">send</span>
+      <span class="material-symbols-outlined pt-1">send</span>
     </button>
   </form>
 </template>
@@ -56,11 +56,10 @@ import { ref, nextTick, onMounted } from "vue";
 
 const input = ref("");
 const textareaRef = ref<HTMLTextAreaElement>();
-const textareaHeight = ref(48); // altura inicial em pixels
+const textareaHeight = ref(48);
 
-// Configurações de altura
 const MIN_HEIGHT = 48;
-const MAX_HEIGHT = 120; // máximo de ~5 linhas
+const MAX_HEIGHT = 120;
 
 const emit = defineEmits<{
   send: [message: string];
@@ -79,10 +78,8 @@ const send = () => {
 const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === "Enter") {
     if (event.shiftKey) {
-      // Shift+Enter: nova linha
       return;
     } else {
-      // Enter: enviar mensagem
       event.preventDefault();
       send();
     }
@@ -94,7 +91,6 @@ const adjustHeight = async () => {
 
   await nextTick();
 
-  // Temporariamente define altura como auto para calcular o scrollHeight correto
   textareaRef.value.style.height = "auto";
 
   const scrollHeight = textareaRef.value.scrollHeight;
@@ -103,7 +99,6 @@ const adjustHeight = async () => {
   textareaHeight.value = newHeight;
   textareaRef.value.style.height = newHeight + "px";
 
-  // Se atingiu altura máxima, mostra scroll
   if (scrollHeight > MAX_HEIGHT) {
     textareaRef.value.style.overflowY = "auto";
   } else {

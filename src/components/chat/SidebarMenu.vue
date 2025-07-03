@@ -5,11 +5,13 @@
         <h2 class="text-2xl">Chats</h2>
       </div>
       <div class="flex gap-2">
-        <button
-          class="p-2 rounded-full hover:bg-zinc-950 text-white/70 transition-colors"
-        >
-          <span class="material-symbols-outlined">new_window</span>
-        </button>
+        <NewChatDropdown
+          @newGroup="handleNewGroup"
+          @newContact="handleNewContact"
+          @newCommunity="handleNewCommunity"
+          @starredMessages="handleStarredMessages"
+          @settings="handleSettings"
+        />
         <button
           class="p-2 rounded-full hover:bg-zinc-950 text-white/70 transition-colors"
         >
@@ -18,10 +20,10 @@
       </div>
     </div>
     <div class="p-3">
-      <input
-        type="text"
-        placeholder="Buscar ou iniciar nova conversa"
-        class="w-full bg-zinc-900 text-white/80 rounded-lg px-4 py-2 focus:outline-none"
+      <ChatSearchDropdown
+        @search="handleSearch"
+        @selectResult="handleSelectResult"
+        @searchOption="handleSearchOption"
       />
     </div>
     <ChatList :chats="chats" />
@@ -30,8 +32,42 @@
 
 <script setup lang="ts">
 import ChatList from "./ChatList.vue";
+import NewChatDropdown from "./NewChatDropdown.vue";
+import ChatSearchDropdown from "./ChatSearchDropdown.vue";
 import type { IChat } from "@/types/chat.types";
 import type { User } from "@/types/auth.types";
 
 defineProps<{ user: User; chats: IChat[] }>();
+
+const handleNewGroup = () => {
+  console.log("Criar novo grupo");
+};
+
+const handleNewContact = () => {
+  console.log("Adicionar novo contato");
+};
+
+const handleNewCommunity = () => {
+  console.log("Criar nova comunidade");
+};
+
+const handleStarredMessages = () => {
+  console.log("Ver mensagens favoritas");
+};
+
+const handleSettings = () => {
+  console.log("Abrir configurações");
+};
+
+const handleSearch = (query: string, type?: string) => {
+  console.log("Buscar:", query, type);
+};
+
+const handleSelectResult = (result: any) => {
+  console.log("Resultado selecionado:", result);
+};
+
+const handleSearchOption = (type: string) => {
+  console.log("Opção de busca:", type);
+};
 </script>
