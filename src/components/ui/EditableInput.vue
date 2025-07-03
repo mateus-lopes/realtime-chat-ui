@@ -5,7 +5,7 @@
         <input
           v-model="editedValue"
           :placeholder="placeholder"
-          class="block w-2/5 p-2 border border-white/20 rounded-lg bg-white/5 text-white focus:outline-none focus:border-blue-500 placeholder-white/50"
+          class="block w-4/5 p-2 border border-white/20 rounded-lg bg-white/5 text-white focus:outline-none focus:border-blue-500 placeholder-white/50"
           type="text"
           @blur="handleBlur"
           ref="inputRef"

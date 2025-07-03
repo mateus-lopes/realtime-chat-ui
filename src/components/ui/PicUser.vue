@@ -3,14 +3,14 @@
     <div @mouseenter="avatarHover = true" @mouseleave="avatarHover = false">
       <div
         v-if="!userAvatar"
-        class="relative w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-blue-800 flex items-center justify-center mb-4 shadow-lg overflow-hidden"
+        class="relative w-28 h-28 rounded-full bg-gradient-to-br from-blue-500 to-blue-800 flex items-center justify-center mb-4 shadow-lg overflow-hidden"
       >
         <span class="text-white text-2xl font-semibold">
           {{ avatarInitials }}
         </span>
         <div
           v-if="avatarHover"
-          class="absolute bg-black/40 bottom-0 right-0 text-white w-full h-full text-base cursor-pointer flex items-center justify-center transition z-20"
+          class="absolute bg-slate-900/40 bottom-0 right-0 text-white w-full h-full text-base cursor-pointer flex items-center justify-center transition z-28"
           @click="showImageUpload = true"
           title="Editar foto"
         >
@@ -19,16 +19,16 @@
       </div>
       <div
         v-else
-        class="relative w-20 h-20 rounded-full mb-4 overflow-hidden shadow-lg"
+        class="relative w-28 h-28 rounded-full mb-4 overflow-hidden shadow-lg"
       >
         <img
           :src="userAvatar"
           :alt="userName"
-          class="w-full h-full object-cover max-w-20 max-h-20 block"
+          class="w-full h-full object-cover max-w-30 max-h-30 block"
         />
         <div
           v-if="avatarHover"
-          class="absolute bg-black/40 bottom-0 right-0 text-white w-full h-full text-base cursor-pointer flex items-center justify-center transition z-20"
+          class="absolute bg-slate-900/40 bottom-0 right-0 text-white w-full h-full text-base cursor-pointer flex items-center justify-center transition z-28"
           @click="showImageUpload = true"
           title="Editar foto"
         >
@@ -39,7 +39,7 @@
     <Teleport to="body">
       <div
         v-if="showImageUpload"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50"
       >
         <div
           class="bg-[#181f2e] border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-xl relative"
