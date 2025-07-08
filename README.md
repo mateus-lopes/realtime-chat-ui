@@ -1,4 +1,4 @@
-# ChatApp - Mobile-First Real-time Chat UI
+# realtime-chat-ui
 
 Uma aplicação de chat em tempo real construída com Vue 3, TypeScript, Rsbuild e design mobile-first.
 
