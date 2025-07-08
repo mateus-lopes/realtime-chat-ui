@@ -8,7 +8,7 @@
         @input="handleSearch"
         type="text"
         placeholder="Buscar mensagens..."
-        class="w-full bg-zinc-800 border border-zinc-800 rounded-lg px-4 py-2 pl-10 pr-10 text-zinc-200 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 pl-10 pr-10 text-zinc-200 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
 
       <!-- Search Icon -->
@@ -61,7 +61,7 @@
     >
       <div
         v-if="isOpen && (searchResults.length > 0 || searchQuery)"
-        class="absolute top-full mt-2 w-full bg-zinc-800 rounded-lg shadow-xl border border-zinc-800 z-50 max-h-96 overflow-y-auto"
+        class="absolute top-full mt-2 w-full bg-zinc-800 rounded-lg shadow-xl border border-zinc-700 z-50 max-h-96 overflow-y-auto"
       >
         <!-- Search Options -->
         <div v-if="!searchQuery" class="py-2">

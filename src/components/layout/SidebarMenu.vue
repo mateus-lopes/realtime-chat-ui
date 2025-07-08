@@ -1,5 +1,5 @@
 <template>
-  <aside class="w-80 bg-black flex flex-col h-full border-r border-zinc-800">
+  <aside class="w-80 bg-black flex flex-col h-full border-r border-zinc-700">
     <div class="flex items-center justify-between p-4">
       <div class="flex items-center gap-3">
         <h2 class="text-2xl">Chats</h2>

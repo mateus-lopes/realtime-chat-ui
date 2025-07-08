@@ -1,6 +1,6 @@
 <template>
   <form
-    class="flex items-end gap-2 p-2 px-6 py-4 border-t border-zinc-800 bg-black"
+    class="flex items-end gap-2 p-2 px-6 py-4 border-t border-zinc-700 bg-black"
     @submit.prevent="send"
   >
     <button

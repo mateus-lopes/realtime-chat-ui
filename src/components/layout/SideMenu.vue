@@ -1,11 +1,11 @@
 <template>
   <div class="flex h-screen bg-black">
     <div
-      class="bg-black border-r border-zinc-800 transition-all duration-300 ease-in-out flex flex-col"
+      class="bg-black border-r border-zinc-700 transition-all duration-300 ease-in-out flex flex-col"
       :class="[isExpanded ? 'w-64' : 'w-16']"
     >
       <!-- isExpanded ? 'absolute inset-y-0 left-0 z-50' : '', -->
-      <div class="p-4 border-b border-zinc-800">
+      <div class="p-4">
         <div class="flex items-center justify-between">
           <div v-if="isExpanded" class="flex items-center gap-3">
             <UserProfileDropdown
@@ -145,7 +145,7 @@
           <span v-if="isExpanded" class="font-medium">Comunidades</span>
         </button>
 
-        <div class="border-t border-zinc-800 my-4"></div>
+        <div class="border-t border-zinc-700 my-4"></div>
 
         <button
           @click="setActiveSection('starred')"
@@ -200,7 +200,7 @@
         </button>
       </nav>
 
-      <div class="p-2 border-t border-zinc-800 flex justify-center">
+      <div class="p-2 flex justify-end">
         <button
           @click="toggleSidebar"
           class="p-2 rounded-lg hover:bg-zinc-800 transition-colors duration-200"

@@ -1,6 +1,6 @@
 <template>
   <header
-    class="flex items-center gap-4 px-6 py-4 border-b border-zinc-800 bg-black"
+    class="flex items-center gap-4 px-6 py-4 border-b border-zinc-700 bg-black"
   >
     <img :src="contact.avatar" alt="avatar" class="w-10 h-10 rounded-full" />
     <div class="flex-1 min-w-0">
