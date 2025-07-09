@@ -364,7 +364,7 @@ describe("useAuthStore", () => {
       expect(store.error).toBeNull();
     });
 
-    it("setOnlineStatus deve atualizar status online do usuário", () => {
+    it("setOnlineStatus deve atualizar status online do usuário", async () => {
       const store = useAuthStore();
       store.user = {
         id: "1",
@@ -376,8 +376,14 @@ describe("useAuthStore", () => {
         lastSeen: new Date(),
       };
 
-      store.setOnlineStatus(true);
+      const updatedUser = { ...store.user, isOnline: true };
+      mockAuthService.updateProfile.mockResolvedValue(updatedUser);
 
+      await store.setOnlineStatus(true);
+
+      expect(mockAuthService.updateProfile).toHaveBeenCalledWith({
+        isOnline: true,
+      });
       expect(store.user.isOnline).toBe(true);
     });
 
@@ -398,6 +404,48 @@ describe("useAuthStore", () => {
 
       expect(store.user.lastSeen).not.toEqual(oldDate);
       expect(store.user.lastSeen).toBeInstanceOf(Date);
+    });
+  });
+
+  describe("updateUser", () => {
+    it("deve atualizar perfil do usuário com sucesso", async () => {
+      const store = useAuthStore();
+      const updatedUserData = {
+        fullName: "Updated Name",
+        about: "Updated about",
+      };
+      const updatedUser = {
+        id: "1",
+        email: "test@example.com",
+        fullName: "Updated Name",
+        about: "Updated about",
+        profilePicture: "",
+        isOnline: true,
+        lastSeen: new Date(),
+      };
+
+      mockAuthService.updateProfile.mockResolvedValue(updatedUser);
+
+      await store.updateUser(updatedUserData);
+
+      expect(mockAuthService.updateProfile).toHaveBeenCalledWith(
+        updatedUserData
+      );
+      expect(store.user).toEqual(updatedUser);
+      expect(store.isLoading).toBe(false);
+    });
+
+    it("deve definir erro se atualização falhar", async () => {
+      const store = useAuthStore();
+      const error = new Error("Update failed");
+
+      mockAuthService.updateProfile.mockRejectedValue(error);
+
+      await expect(store.updateUser({ fullName: "New Name" })).rejects.toThrow(
+        "Update failed"
+      );
+      expect(store.error).toBe("Update failed");
+      expect(store.isLoading).toBe(false);
     });
   });
 });

@@ -42,6 +42,7 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useAuth } from "@/composables/useAuth";
 import { useAuthStore } from "@/stores/auth.store";
+import { useToast } from "@/composables/useToast";
 import DividerCustom from "@/components/ui/DividerCustom.vue";
 import EditableInput from "@/components/ui/EditableInput.vue";
 import StatusUser from "@/components/ui/StatusUser.vue";
@@ -49,6 +50,7 @@ import PicUser from "@/components/ui/PicUser.vue";
 
 const { logout, requireAuth } = useAuth();
 const authStore = useAuthStore();
+const { success, error } = useToast();
 
 const user = computed(() => authStore.user);
 const userName = computed(() => authStore.userName);
@@ -74,12 +76,23 @@ const saveUserInfo = async (param: { key: string; value: any }) => {
   try {
     await authStore.updateUser({
       [param.key]: param.value,
-      _id: user.value._id,
     });
-    if (param.key === "fullName") nameEditing.value = false;
-    if (param.key === "about") aboutEditing.value = false;
-  } catch (error) {
-    alert("Erro ao atualizar informação");
+    if (param.key === "fullName") {
+      nameEditing.value = false;
+      success("Nome atualizado", "Seu nome foi atualizado com sucesso!");
+    }
+    if (param.key === "about") {
+      aboutEditing.value = false;
+      success(
+        "Descrição atualizada",
+        "Sua descrição foi atualizada com sucesso!"
+      );
+    }
+  } catch (err: any) {
+    error(
+      "Erro ao atualizar",
+      err.message || "Não foi possível atualizar a informação"
+    );
   }
 };
 

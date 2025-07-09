@@ -88,7 +88,9 @@ class AuthService {
       await apiService.post(apiConfig.ENDPOINTS.AUTH.FORGOT_PASSWORD, request);
     } catch (error: any) {
       throw new Error(
-        error.response?.data?.message || error.message || "Failed to send reset email"
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to send reset email"
       );
     }
   }
@@ -98,7 +100,9 @@ class AuthService {
       await apiService.post(apiConfig.ENDPOINTS.AUTH.RESET_PASSWORD, request);
     } catch (error: any) {
       throw new Error(
-        error.response?.data?.message || error.message || "Failed to reset password"
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to reset password"
       );
     }
   }
@@ -145,10 +149,30 @@ class AuthService {
 
   async getCurrentUser(): Promise<User | null> {
     try {
-      const response = await apiService.get<User>(apiConfig.ENDPOINTS.AUTH.PROFILE);
+      const response = await apiService.get<User>(
+        apiConfig.ENDPOINTS.AUTH.PROFILE
+      );
       return response.data;
     } catch (error) {
       return null;
+    }
+  }
+
+  async updateProfile(userData: Partial<User>): Promise<User> {
+    try {
+      const response = await apiService.patch<User>(
+        apiConfig.ENDPOINTS.AUTH.UPDATE,
+        userData
+      );
+      const updatedUser = response.data;
+      this.storeUser(updatedUser);
+      return updatedUser;
+    } catch (error: any) {
+      throw new Error(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to update profile"
+      );
     }
   }
 

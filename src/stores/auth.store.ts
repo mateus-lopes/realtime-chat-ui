@@ -25,7 +25,10 @@ export const useAuthStore = defineStore("auth", () => {
   });
 
   const userName = computed(() => user.value?.fullName || "");
+  const userAbout = computed(() => user.value?.about || "");
   const userEmail = computed(() => user.value?.email || "");
+  const userAvatar = computed(() => user.value?.profilePicture || "");
+  const isOnline = computed(() => user.value?.isOnline || false);
 
   const initializeAuth = async () => {
     try {
@@ -143,9 +146,18 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const updateUser = (userData: Partial<User>) => {
-    if (user.value) {
-      user.value = { ...user.value, ...userData };
+  const updateUser = async (userData: Partial<User>) => {
+    try {
+      isLoading.value = true;
+      error.value = null;
+
+      const updatedUser = await authService.updateProfile(userData);
+      user.value = updatedUser;
+    } catch (err: any) {
+      error.value = err.message;
+      throw err;
+    } finally {
+      isLoading.value = false;
     }
   };
 
@@ -153,9 +165,17 @@ export const useAuthStore = defineStore("auth", () => {
     error.value = null;
   };
 
-  const setOnlineStatus = (online: boolean) => {
-    if (user.value) {
-      user.value.isOnline = online;
+  const setOnlineStatus = async (online: boolean) => {
+    if (!user.value) return;
+
+    try {
+      await updateUser({ isOnline: online });
+    } catch (err: any) {
+      console.error("Failed to update online status:", err);
+      // Revert the change if it fails
+      if (user.value) {
+        user.value.isOnline = !online;
+      }
     }
   };
 
@@ -176,7 +196,10 @@ export const useAuthStore = defineStore("auth", () => {
     // Getters
     isAuthenticated,
     userName,
+    userAbout,
     userEmail,
+    userAvatar,
+    isOnline,
 
     // Actions
     initializeAuth,

@@ -11,6 +11,7 @@ export const API_CONFIG = {
       LOGIN: "/auth/login",
       LOGOUT: "/auth/logout",
       ME: "/auth/me",
+      PROFILE: "/auth/me",
       UPDATE: "/auth/update",
       REFRESH: "/auth/refresh", // ✅ Implemented!
       FORGOT_PASSWORD: "/auth/forgot-password", // Not implemented yet

@@ -89,12 +89,12 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useAuthStore } from "@/stores/auth.store";
-import authService from "@/services/auth.service";
+import { useToast } from "@/composables/useToast";
 import ImageUpload from "@/components/ui/ImageUpload.vue";
 import MobileButton from "@/components/ui/MobileButton.vue";
 
 const authStore = useAuthStore();
-const isOnline = computed(() => authStore.isOnline);
+const { success, error } = useToast();
 const user = computed(() => authStore.user);
 const userName = computed(() => user.value?.fullName || "User");
 const userAvatar = computed(() => authStore.userAvatar);
@@ -129,16 +129,22 @@ const saveProfilePicture = async () => {
 
   uploadingImage.value = true;
   try {
-    await authService.updateProfile({
+    await authStore.updateUser({
       profilePicture: newProfilePicture.value,
-      _id: user.value._id,
     });
 
     showImageUpload.value = false;
     newProfilePicture.value = "";
-  } catch (error) {
-    console.error("Failed to update profile picture:", error);
-    alert("Erro ao atualizar foto de perfil");
+    success(
+      "Foto atualizada",
+      "Sua foto de perfil foi atualizada com sucesso!"
+    );
+  } catch (err: any) {
+    console.error("Failed to update profile picture:", err);
+    error(
+      "Erro ao atualizar foto",
+      err.message || "Não foi possível atualizar sua foto de perfil"
+    );
   } finally {
     uploadingImage.value = false;
   }

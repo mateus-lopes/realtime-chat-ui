@@ -74,11 +74,13 @@
 <script setup lang="ts">
 import { useForm } from "@/composables/useForm";
 import { useAuth } from "@/composables/useAuth";
+import { useToast } from "@/composables/useToast";
 import MobileInput from "@/components/ui/MobileInput.vue";
 import MobileButton from "@/components/ui/MobileButton.vue";
 import type { LoginCredentials } from "@/types/auth.types";
 
 const { login } = useAuth();
+const { success, error } = useToast();
 
 const initialValues: LoginCredentials = {
   email: "",
@@ -111,7 +113,12 @@ const {
 
 const handleSubmit = () => {
   handleFormSubmit(async (values) => {
-    await login(values);
+    try {
+      await login(values);
+      success("Login realizado", "Bem-vindo de volta!");
+    } catch (err: any) {
+      error("Erro no login", err.message || "Credenciais inválidas");
+    }
   });
 };
 </script>

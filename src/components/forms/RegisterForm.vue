@@ -132,11 +132,13 @@
 import { computed } from "vue";
 import { useForm } from "@/composables/useForm";
 import { useAuth } from "@/composables/useAuth";
+import { useToast } from "@/composables/useToast";
 import MobileInput from "@/components/ui/MobileInput.vue";
 import MobileButton from "@/components/ui/MobileButton.vue";
 import type { RegisterCredentials } from "@/types/auth.types";
 
 const { register } = useAuth();
+const { success, error } = useToast();
 
 const initialValues: RegisterCredentials = {
   fullName: "",
@@ -203,7 +205,15 @@ const hasNumber = computed(() => /\d/.test(formState.password.value));
 
 const handleSubmit = () => {
   handleFormSubmit(async (values) => {
-    await register(values);
+    try {
+      await register(values);
+      success("Conta criada", "Sua conta foi criada com sucesso!");
+    } catch (err: any) {
+      error(
+        "Erro no cadastro",
+        err.message || "Não foi possível criar sua conta"
+      );
+    }
   });
 };
 </script>
