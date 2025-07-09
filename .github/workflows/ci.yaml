@@ -44,4 +44,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: mateuslopess/realtime-chat-ui:${{ github.sha }}
+        tags: mateuslopess/ci-sum:${{ github.sha }}
