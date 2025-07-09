@@ -1,9 +1,7 @@
-// Pinia Auth Store for Mobile-First Chat App
-
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import authService from "@/services/auth.service";
-import { getTokenExpiryInfo, isTokenValid } from "@/utils/jwt.utils";
+import { isTokenValid } from "@/utils/jwt.utils";
 import type {
   User,
   LoginCredentials,
@@ -13,14 +11,12 @@ import type {
 } from "@/types/auth.types";
 
 export const useAuthStore = defineStore("auth", () => {
-  // State
   const user = ref<User | null>(null);
   const token = ref<string | null>(null);
   const refreshToken = ref<string | null>(null);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
-  // Getters
   const isAuthenticated = computed(() => {
     const hasToken = !!token.value;
     const hasUser = !!user.value;
@@ -29,19 +25,7 @@ export const useAuthStore = defineStore("auth", () => {
   });
 
   const userName = computed(() => user.value?.fullName || "");
-  const userAbout = computed(() => user.value?.about || "");
   const userEmail = computed(() => user.value?.email || "");
-  const userAvatar = computed(() => user.value?.profilePicture || "");
-  const isOnline = computed(() => user.value?.isOnline || false);
-
-  // 🔄 Token-related getters
-  const tokenExpiryInfo = computed(() => {
-    return token.value ? getTokenExpiryInfo(token.value) : "No token";
-  });
-
-  const refreshStatus = computed(() => {
-    return authService.getRefreshStatus();
-  });
 
   const initializeAuth = async () => {
     try {
@@ -62,8 +46,8 @@ export const useAuthStore = defineStore("auth", () => {
           await logout();
         }
       }
-    } catch (err) {
-      console.error("Auth initialization error:", err);
+    } catch (error: any) {
+      console.error("Auth initialization error:", error);
       await logout();
     } finally {
       isLoading.value = false;
@@ -80,10 +64,8 @@ export const useAuthStore = defineStore("auth", () => {
       user.value = authResponse.user;
       token.value = authResponse.token;
       refreshToken.value = authResponse.refreshToken;
-
-      return authResponse;
     } catch (err: any) {
-      error.value = err.message || "Login failed";
+      error.value = err.message;
       throw err;
     } finally {
       isLoading.value = false;
@@ -100,10 +82,8 @@ export const useAuthStore = defineStore("auth", () => {
       user.value = authResponse.user;
       token.value = authResponse.token;
       refreshToken.value = authResponse.refreshToken;
-
-      return authResponse;
     } catch (err: any) {
-      error.value = err.message || "Registration failed";
+      error.value = err.message;
       throw err;
     } finally {
       isLoading.value = false;
@@ -114,10 +94,9 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       isLoading.value = true;
       error.value = null;
-
       await authService.forgotPassword(request);
     } catch (err: any) {
-      error.value = err.message || "Failed to send reset email";
+      error.value = err.message;
       throw err;
     } finally {
       isLoading.value = false;
@@ -128,10 +107,9 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       isLoading.value = true;
       error.value = null;
-
       await authService.resetPassword(request);
     } catch (err: any) {
-      error.value = err.message || "Failed to reset password";
+      error.value = err.message;
       throw err;
     } finally {
       isLoading.value = false;
@@ -140,16 +118,14 @@ export const useAuthStore = defineStore("auth", () => {
 
   const logout = async () => {
     try {
-      isLoading.value = true;
       await authService.logout();
-    } catch (err) {
-      console.error("Logout error:", err);
+    } catch (error) {
+      console.error("Logout error:", error);
     } finally {
       user.value = null;
       token.value = null;
       refreshToken.value = null;
       error.value = null;
-      isLoading.value = false;
     }
   };
 
@@ -158,37 +134,18 @@ export const useAuthStore = defineStore("auth", () => {
       const newToken = await authService.refreshToken();
       if (newToken) {
         token.value = newToken;
-        return true;
+      } else {
+        await logout();
       }
-      return false;
-    } catch (err) {
-      console.error("Token refresh error:", err);
+    } catch (error) {
+      console.error("Token refresh failed:", error);
       await logout();
-      return false;
     }
   };
 
-  const updateUser = async (updatedUser: Partial<User>) => {
-    console.log("Updating user:", updatedUser);
-    console.log("Current user before update:", user.value);
-    try {
-      isLoading.value = true;
-      error.value = null;
-
-      if (user.value) {
-        user.value = { ...user.value, ...updatedUser };
-        if (typeof window !== "undefined" && window.localStorage) {
-          localStorage.setItem("user_data", JSON.stringify(user.value));
-        }
-      }
-
-      await authService.updateProfile(updatedUser);
-    } catch (err: any) {
-      console.error("Update user error:", err);
-      error.value = err.message || "Failed to update user information";
-      throw err;
-    } finally {
-      isLoading.value = false;
+  const updateUser = (userData: Partial<User>) => {
+    if (user.value) {
+      user.value = { ...user.value, ...userData };
     }
   };
 
@@ -219,12 +176,7 @@ export const useAuthStore = defineStore("auth", () => {
     // Getters
     isAuthenticated,
     userName,
-    userAbout,
     userEmail,
-    userAvatar,
-    isOnline,
-    tokenExpiryInfo,
-    refreshStatus,
 
     // Actions
     initializeAuth,

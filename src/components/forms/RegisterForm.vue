@@ -142,8 +142,6 @@ const initialValues: RegisterCredentials = {
   fullName: "",
   email: "",
   password: "",
-  confirmPassword: "",
-  acceptTerms: false,
 };
 
 const validationRules = {

@@ -27,16 +27,6 @@
       />
 
       <div class="form-options">
-        <label class="checkbox-wrapper">
-          <input
-            v-model="formState.rememberMe.value"
-            type="checkbox"
-            class="checkbox"
-            :disabled="isSubmitting"
-          />
-          <span class="checkbox-label">Lembrar de mim</span>
-        </label>
-
         <router-link
           to="/forgot-password"
           class="forgot-password-link"
@@ -93,22 +83,21 @@ const { login } = useAuth();
 const initialValues: LoginCredentials = {
   email: "",
   password: "",
-  rememberMe: false,
 };
 
 const validationRules = {
   email: [
-    { required: true, message: "E-mail é obrigatório" },
-    {
-      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      message: "E-mail inválido",
-    },
+    { type: "required", message: "E-mail é obrigatório" },
+    { type: "email", message: "E-mail inválido" },
   ],
   password: [
-    { required: true, message: "Senha é obrigatória" },
-    { minLength: 6, message: "Senha deve ter pelo menos 6 caracteres" },
+    { type: "required", message: "Senha é obrigatória" },
+    {
+      type: "minLength",
+      value: 6,
+      message: "Senha deve ter pelo menos 6 caracteres",
+    },
   ],
-  rememberMe: [],
 };
 
 const {
