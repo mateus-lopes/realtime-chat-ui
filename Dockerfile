@@ -16,24 +16,14 @@ COPY . .
 # Build do projeto
 RUN npm run build
 
-# -------- Stage 2: Production --------
-FROM nginx:1.25-alpine
+# Instala Express para servir os arquivos da pasta dist
+RUN npm install express
 
-# Remove a configuração padrão
-RUN rm /etc/nginx/conf.d/default.conf
+# Garante que o server.js está na raiz
+# (caso você o tenha criado fora de /src ou similar)
 
-# Copia build da aplicação para o Nginx
-COPY --from=builder /app/dist /usr/share/nginx/html
+# Expondo a porta que o Express usará
+EXPOSE 3000
 
-# Copia configuração personalizada do Nginx
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expondo a porta padrão
-EXPOSE 80
-
-# Healthcheck opcional
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --quiet --spider http://localhost || exit 1
-
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]    
+# Comando de inicialização
+CMD ["node", "server.js"]

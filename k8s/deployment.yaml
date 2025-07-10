@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: realtime-chat-ui
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: realtime-chat-ui
+  template:
+    metadata:
+      labels:
+        app: realtime-chat-ui
+    spec:
+      containers:
+        - name: realtime-chat-ui
+          image: mateuslopess/ci-sum
+          ports:
+            - containerPort: 8000

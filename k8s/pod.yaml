@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: realtime-chat-ui
+spec:
+  containers:
+    - name: realtime-chat-ui
+      image: mateuslopess/ci-sum
+      ports:
+        - containerPort: 8000

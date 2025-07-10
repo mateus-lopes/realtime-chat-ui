@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: realtime-chat-ui-service
+spec:
+  selector:
+    app: realtime-chat-ui
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
