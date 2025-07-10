@@ -5,7 +5,7 @@ resources:
 - service.yaml
 images:
 - name: mateuslopess/ci-sum
-  newTag: da97dac5aad3c944aabbb6423945001b51c5b076
+  newTag: f66c57090e440410f9620cf4d7f055cbe35d27c7
 - name: realtime-chat-ui
   newName: mateuslopess/ci-sum
   newTag: c58b625834eb8b45c0d3d3b45ba4cbc288fc5146
