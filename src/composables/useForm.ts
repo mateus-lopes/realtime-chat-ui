@@ -7,7 +7,6 @@ export function useForm<T extends Record<string, any>>(
 ) {
   const formState = reactive<FormState>({});
 
-  // Initialize form fields
   Object.keys(initialValues).forEach((key) => {
     formState[key] = {
       value: initialValues[key],
@@ -52,22 +51,22 @@ export function useForm<T extends Record<string, any>>(
 
   const validateRule = (value: string, rule: ValidationRule): boolean => {
     switch (rule.type) {
-      case 'required':
-        return value.trim() !== '';
-      
-      case 'email':
+      case "required":
+        return value.trim() !== "";
+
+      case "email":
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(value);
-      
-      case 'minLength':
+
+      case "minLength":
         return value.length >= (rule.value as number);
-      
-      case 'maxLength':
+
+      case "maxLength":
         return value.length <= (rule.value as number);
-      
-      case 'pattern':
+
+      case "pattern":
         return (rule.value as RegExp).test(value);
-      
+
       default:
         return true;
     }
@@ -89,8 +88,7 @@ export function useForm<T extends Record<string, any>>(
   const setValue = (fieldName: string, value: string) => {
     if (formState[fieldName]) {
       formState[fieldName].value = value;
-      
-      // Validate if field was already touched
+
       if (formState[fieldName].touched) {
         validateField(fieldName);
       }
@@ -100,8 +98,7 @@ export function useForm<T extends Record<string, any>>(
   const setTouched = (fieldName: string, touched: boolean) => {
     if (formState[fieldName]) {
       formState[fieldName].touched = touched;
-      
-      // Validate when marking as touched
+
       if (touched) {
         validateField(fieldName);
       }
@@ -121,20 +118,17 @@ export function useForm<T extends Record<string, any>>(
       isSubmitting.value = true;
       submitError.value = null;
 
-      // Mark all fields as touched
       Object.keys(formState).forEach((fieldName) => {
         setTouched(fieldName, true);
       });
 
-      // Validate form
       if (!validateForm()) {
         return;
       }
 
-      // Submit form
       await onSubmit(getValues());
     } catch (error: any) {
-      submitError.value = error.message || 'Submission failed';
+      submitError.value = error.message || "Submission failed";
       throw error;
     } finally {
       isSubmitting.value = false;
@@ -150,7 +144,6 @@ export function useForm<T extends Record<string, any>>(
     submitError.value = null;
   };
 
-  // Mobile helpers
   const handleInput = (fieldName: string) => (event: Event) => {
     const target = event.target as HTMLInputElement;
     setValue(fieldName, target.value);

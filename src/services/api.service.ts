@@ -1,8 +1,4 @@
-import type {
-  ApiResponse,
-  ApiError,
-  RequestConfig,
-} from "@/types/api.types";
+import type { ApiResponse, ApiError, RequestConfig } from "@/types/api.types";
 import apiConfig from "@/config/api.config";
 
 class ApiService {
@@ -129,7 +125,6 @@ class ApiService {
   }
 }
 
-// Custom error class for API errors
 export class ApiError extends Error {
   constructor(
     public status: number,

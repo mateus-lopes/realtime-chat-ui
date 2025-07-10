@@ -172,7 +172,6 @@ export const useAuthStore = defineStore("auth", () => {
       await updateUser({ isOnline: online });
     } catch (err: any) {
       console.error("Failed to update online status:", err);
-      // Revert the change if it fails
       if (user.value) {
         user.value.isOnline = !online;
       }
@@ -186,14 +185,12 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   return {
-    // State
     user,
     token,
     refreshToken,
     isLoading,
     error,
 
-    // Getters
     isAuthenticated,
     userName,
     userAbout,
@@ -201,7 +198,6 @@ export const useAuthStore = defineStore("auth", () => {
     userAvatar,
     isOnline,
 
-    // Actions
     initializeAuth,
     login,
     register,
