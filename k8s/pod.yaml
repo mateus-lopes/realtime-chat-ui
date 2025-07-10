@@ -5,6 +5,6 @@ metadata:
 spec:
   containers:
     - name: realtime-chat-ui
-      image: mateuslopess/ci-sum
+      image: mateuslopess/realtime-chat-ui
       ports:
         - containerPort: 8000

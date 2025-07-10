@@ -44,7 +44,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: mateuslopess/ci-sum:${{ github.sha }}
+        tags: mateuslopess/realtime-chat-ui:${{ github.sha }}
 
     # kustomize
     - name: Setup Kustomize
@@ -53,7 +53,7 @@ jobs:
     - name: Update kustomization.yaml
       run: |
         cd k8s
-        kustomize edit set image mateuslopess/ci-sum:$GITHUB_SHA
+        kustomize edit set image mateuslopess/realtime-chat-ui:$GITHUB_SHA
 
     - name: Commit changes
       run: |
