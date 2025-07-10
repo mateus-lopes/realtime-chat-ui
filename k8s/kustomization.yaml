@@ -1,9 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - deployment.yaml
-  - service.yaml
+- deployment.yaml
+- service.yaml
 images:
-  - name: realtime-chat-ui
-    newName: mateuslopess/ci-sum
-    newTag: c58b625834eb8b45c0d3d3b45ba4cbc288fc5146
+- name: mateuslopess/ci-sum
+  newTag: da97dac5aad3c944aabbb6423945001b51c5b076
+- name: realtime-chat-ui
+  newName: mateuslopess/ci-sum
+  newTag: c58b625834eb8b45c0d3d3b45ba4cbc288fc5146
