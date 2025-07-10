@@ -1,29 +1,29 @@
-# -------- Stage 1: Build --------
-FROM node:20-alpine AS builder
+FROM node:22.9.0-slim AS builder
 
-# Diretório de trabalho
 WORKDIR /app
 
-# Copia arquivos de dependência
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
-# Instala dependências (com cache eficiente)
 RUN npm ci
 
-# Copia o restante da aplicação
 COPY . .
 
-# Build do projeto
+ENV VITE_API_URL="__VITE_API_URL__"
+
 RUN npm run build
 
-# Instala Express para servir os arquivos da pasta dist
-RUN npm install express
+FROM nginx:alpine AS runner
 
-# Garante que o server.js está na raiz
-# (caso você o tenha criado fora de /src ou similar)
+RUN rm -rf /usr/share/nginx/html/*
 
-# Expondo a porta que o Express usará
-EXPOSE 3000
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Comando de inicialização
-CMD ["node", "server.js"]
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 80
+
+CMD ["/entrypoint.sh"]

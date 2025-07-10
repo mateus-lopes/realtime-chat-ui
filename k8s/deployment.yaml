@@ -16,4 +16,4 @@ spec:
         - name: realtime-chat-ui
           image: mateuslopess/ci-sum
           ports:
-            - containerPort: 8000
+            - containerPort: 3000

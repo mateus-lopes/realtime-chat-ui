@@ -39,6 +39,7 @@
     "vue-jest": "^5.0.0-alpha.10"
   },
   "dependencies": {
+    "express": "^5.1.0",
     "jwt-decode": "^4.0.0",
     "pinia": "^3.0.2",
     "tailwind": "^4.0.0",

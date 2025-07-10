@@ -7,5 +7,5 @@ spec:
     app: realtime-chat-ui
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 8000
+      port: 3000
+      targetPort: 3000
