@@ -4,6 +4,6 @@ resources:
 - deployment.yaml
 - service.yaml
 images:
-  - name: realtime-chat-ui
+  - name: app
     newName: mateuslopess/realtime-chat-api
     newTag: c58b625834eb8b45c0d3d3b45ba4cbc288fc5146

@@ -5,7 +5,7 @@ metadata:
   namespace: frontend
 spec:
   selector:
-    app: realtime-chat-ui
+    app: app
   ports:
     - protocol: TCP
       port: 3000
