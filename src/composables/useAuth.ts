@@ -69,7 +69,6 @@ export function useAuth() {
     }
   };
 
-  // Navigation guards - these add real value
   const requireAuth = () => {
     if (!authStore.isAuthenticated) {
       router.push({
@@ -89,24 +88,20 @@ export function useAuth() {
     return true;
   };
 
-  // Initialization - useful for app startup
   const initializeAuth = async () => {
     await authStore.initializeAuth();
   };
 
   return {
-    // Actions with navigation
     login,
     register,
     forgotPassword,
     resetPassword,
     logout,
 
-    // Navigation guards
     requireAuth,
     requireGuest,
 
-    // Initialization
     initializeAuth,
   };
 }

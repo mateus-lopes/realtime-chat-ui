@@ -13,7 +13,7 @@ export interface ApiError {
 }
 
 export interface RequestConfig {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   url: string;
   data?: any;
   headers?: Record<string, string>;

@@ -9,7 +9,6 @@ import type {
   RegisterCredentials,
 } from "@/types/auth.types";
 
-// Mock dependencies
 vi.mock("@/services/auth.service");
 vi.mock("@/utils/jwt.utils");
 
@@ -22,7 +21,6 @@ describe("useAuthStore", () => {
     setActivePinia(createPinia());
     vi.clearAllMocks();
 
-    // Default mocks
     mockIsTokenValid.mockReturnValue(true);
     mockGetTokenExpiryInfo.mockReturnValue("Valid token");
     mockAuthService.getRefreshStatus.mockReturnValue({

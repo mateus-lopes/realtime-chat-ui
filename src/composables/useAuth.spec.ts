@@ -10,7 +10,6 @@ import type {
   ResetPasswordRequest,
 } from "@/types/auth.types";
 
-// Mock dependencies
 vi.mock("vue-router", () => ({
   useRouter: vi.fn(),
 }));
