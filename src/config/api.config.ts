@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  BASE_URL: "http://localhost:5001/api",
+  BASE_URL: import.meta.env.VITE_API_URL,
 
   ENDPOINTS: {
     AUTH: {
@@ -38,7 +38,7 @@ export const API_CONFIG = {
 };
 
 export const getApiConfig = () => {
-  const baseUrl = "http://localhost:5001/api";
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   return {
     ...API_CONFIG,

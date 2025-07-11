@@ -1,5 +1,12 @@
-import type { ApiResponse, ApiError, RequestConfig } from "@/types/api.types";
+import type { ApiResponse, RequestConfig } from "@/types/api.types";
 import apiConfig from "@/config/api.config";
+
+export interface ApiError {
+  status: number;
+  message: string;
+  data: any;
+  type: string;
+}
 
 class ApiService {
   private baseURL: string;
@@ -60,7 +67,12 @@ class ApiService {
         throw error;
       }
 
-      if (error.name === "AbortError") {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "name" in error &&
+        (error as any).name === "AbortError"
+      ) {
         throw new ApiError(408, "Request timeout", {}, "TIMEOUT");
       }
 
