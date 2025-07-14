@@ -4,11 +4,10 @@ metadata:
   name: realtime-chat-ui-service
   namespace: frontend
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: app
   ports:
     - protocol: TCP
       port: 80
       targetPort: 80
-      nodePort: 30003
