@@ -4,7 +4,7 @@ metadata:
   name: realtime-chat-ui-service
   namespace: frontend
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: app
   ports:
