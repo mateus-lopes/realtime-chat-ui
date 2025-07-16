@@ -26,7 +26,7 @@ import { useAuthStore } from "@/stores/auth.store";
 import { useToast } from "@/composables/useToast";
 
 const authStore = useAuthStore();
-const { success, error } = useToast();
+const { error } = useToast();
 const isOnline = computed(() => authStore.isOnline);
 const isUpdating = ref(false);
 
@@ -38,10 +38,6 @@ async function toggleOnlineStatus() {
 
   try {
     await authStore.setOnlineStatus(newStatus);
-    success(
-      `Status ${newStatus ? "Online" : "Offline"}`,
-      `Você está agora ${newStatus ? "online" : "offline"}`
-    );
   } catch (err: any) {
     error(
       "Erro ao atualizar status",
