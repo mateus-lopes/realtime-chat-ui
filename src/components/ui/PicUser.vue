@@ -3,7 +3,7 @@
     <div @mouseenter="avatarHover = true" @mouseleave="avatarHover = false">
       <div
         v-if="!userAvatar"
-        class="relative w-28 h-28 rounded-full bg-gradient-to-br from-blue-500 to-blue-800 flex items-center justify-center mb-4 shadow-lg overflow-hidden"
+        class="relative w-28 h-28 rounded-full bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center mb-4 shadow-lg overflow-hidden"
       >
         <span class="text-white text-2xl font-semibold">
           {{ avatarInitials }}

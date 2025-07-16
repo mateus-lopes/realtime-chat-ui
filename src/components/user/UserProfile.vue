@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-black flex items-center justify-center p-4">
-    <main class="flex items-start gap-6 w-8/12">
+    <main class="flex items-start gap-6 lg:w-11/12 2xl:w-8/12">
       <section class="w-1/4">
         <div class="flex flex-col w-full">
           <!-- Menu Items -->

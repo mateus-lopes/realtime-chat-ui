@@ -2,8 +2,8 @@
   <div class="relative" ref="dropdownRef">
     <button
       @click="toggleDropdown"
-      class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-600 hover:border-gray-500 transition-colors duration-200"
-      :class="{ 'border-green-500': isOpen }"
+      class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-600 hover:opacity-80 transition-colors duration-200"
+      :class="{ 'border-green-500': isOnline }"
     >
       <img
         v-if="userAvatar"
@@ -13,7 +13,7 @@
       />
       <div
         v-else
-        class="w-full h-full bg-zinc-700 flex items-center justify-center text-white font-medium text-sm"
+        class="w-full h-full bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center text-white font-medium text-sm"
       >
         {{ userInitials }}
       </div>
@@ -47,7 +47,7 @@
               />
               <div
                 v-else
-                class="w-full h-full bg-gray-600 flex items-center justify-center text-white font-medium text-lg"
+                class="w-full h-full bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center text-white font-medium text-lg"
               >
                 {{ userInitials }}
               </div>
@@ -170,7 +170,7 @@ const { logout } = useAuth();
 const userName = computed(() => authStore.userName || "Usuário");
 const userEmail = computed(() => authStore.userEmail || "email@exemplo.com");
 const userAvatar = computed(() => authStore.userAvatar);
-const userAbout = computed(() => authStore.userAbout || "");
+const isOnline = computed(() => authStore.isOnline || false);
 
 const userInitials = computed(() => {
   return userName.value
@@ -197,11 +197,6 @@ const closeDropdown = () => {
 
 const handleEditProfile = () => {
   emit("editProfile");
-  closeDropdown();
-};
-
-const handleSettings = () => {
-  emit("settings");
   closeDropdown();
 };
 
