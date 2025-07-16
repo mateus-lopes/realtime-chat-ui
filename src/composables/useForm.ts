@@ -3,7 +3,7 @@ import type { FormState, ValidationRule } from "@/types/auth.types";
 
 export function useForm<T extends Record<string, any>>(
   initialValues: T,
-  validationRules: Record<keyof T, ValidationRule[]>
+  validationRules: Partial<Record<keyof T | string, ValidationRule[]>>
 ) {
   const formState = reactive<FormState>({});
 
@@ -107,8 +107,8 @@ export function useForm<T extends Record<string, any>>(
 
   const getValues = (): T => {
     const values = {} as T;
-    Object.keys(formState).forEach((key) => {
-      values[key as keyof T] = formState[key].value;
+    (Object.keys(initialValues) as (keyof T)[]).forEach((key) => {
+      values[key] = formState[key as string].value as any;
     });
     return values;
   };

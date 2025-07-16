@@ -18,6 +18,8 @@ export interface RegisterCredentials {
   fullName: string;
   email: string;
   password: string;
+  confirmPassword?: string;
+  acceptTerms?: boolean;
 }
 
 export interface ForgotPasswordRequest {

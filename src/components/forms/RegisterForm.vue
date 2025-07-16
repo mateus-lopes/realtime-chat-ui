@@ -10,7 +10,7 @@
         :error="formState.fullName.error"
         :disabled="isSubmitting"
         required
-        @blur="setTouched('fullName')"
+        @blur="setTouched('fullName', true)"
       />
 
       <MobileInput
@@ -23,7 +23,7 @@
         :error="formState.email.error"
         :disabled="isSubmitting"
         required
-        @blur="setTouched('email')"
+        @blur="setTouched('email', true)"
       />
 
       <MobileInput
@@ -35,10 +35,11 @@
         :error="formState.password.error"
         :disabled="isSubmitting"
         required
-        @blur="setTouched('password')"
+        @blur="setTouched('password', true)"
       />
 
       <MobileInput
+        v-if="formState.password.value"
         v-model="formState.confirmPassword.value"
         type="password"
         label="Confirmar senha"
@@ -47,7 +48,7 @@
         :error="formState.confirmPassword.error"
         :disabled="isSubmitting"
         required
-        @blur="setTouched('confirmPassword')"
+        @blur="setTouched('confirmPassword', true)"
       />
 
       <div class="password-requirements" v-if="formState.password.value">
@@ -78,7 +79,7 @@
           type="checkbox"
           class="checkbox"
           :disabled="isSubmitting"
-          @blur="setTouched('acceptTerms')"
+          @blur="setTouched('acceptTerms', true)"
         />
         <span class="terms-text">
           Eu aceito os
@@ -144,23 +145,34 @@ const initialValues: RegisterCredentials = {
   fullName: "",
   email: "",
   password: "",
+  confirmPassword: "",
+  acceptTerms: false,
 };
 
 const validationRules = {
   fullName: [
-    { required: true, message: "Nome é obrigatório" },
-    { minLength: 2, message: "Nome deve ter pelo menos 2 caracteres" },
+    { type: "required", message: "Nome é obrigatório" },
+    {
+      type: "minLength",
+      value: 2,
+      message: "Nome deve ter pelo menos 2 caracteres",
+    },
   ],
   email: [
-    { required: true, message: "E-mail é obrigatório" },
+    { type: "required", message: "E-mail é obrigatório" },
     {
-      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      type: "pattern",
+      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
       message: "E-mail inválido",
     },
   ],
   password: [
-    { required: true, message: "Senha é obrigatória" },
-    { minLength: 8, message: "Senha deve ter pelo menos 8 caracteres" },
+    { type: "required", message: "Senha é obrigatória" },
+    {
+      type: "minLength",
+      value: 8,
+      message: "Senha deve ter pelo menos 8 caracteres",
+    },
     {
       custom: (value: string) => /[A-Z]/.test(value),
       message: "Senha deve conter pelo menos uma letra maiúscula",
@@ -175,9 +187,15 @@ const validationRules = {
     },
   ],
   confirmPassword: [
-    { required: true, message: "Confirmação de senha é obrigatória" },
+    { type: "required", message: "Confirmação de senha é obrigatória" },
     {
-      custom: (value: string) => value === formState.password?.value,
+      custom: (value: string) => {
+        try {
+          return value === formState.password?.value;
+        } catch {
+          return false;
+        }
+      },
       message: "Senhas não coincidem",
     },
   ],
