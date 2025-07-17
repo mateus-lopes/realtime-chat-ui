@@ -4,9 +4,9 @@ import { useAuthStore } from "./auth.store";
 import authService from "@/services/auth.service";
 import { isTokenValid, getTokenExpiryInfo } from "@/utils/jwt.utils";
 import type {
-  User,
-  LoginCredentials,
-  RegisterCredentials,
+  IUser,
+  ILoginCredentials,
+  IRegisterCredentials,
 } from "@/types/auth.types";
 
 vi.mock("@/services/auth.service");
@@ -52,7 +52,7 @@ describe("useAuthStore", () => {
 
     it("isAuthenticated deve retornar true quando há token válido e usuário", () => {
       const store = useAuthStore();
-      const mockUser: User = {
+      const mockUser: IUser = {
         id: "1",
         email: "test@example.com",
         fullName: "Test User",
@@ -71,7 +71,7 @@ describe("useAuthStore", () => {
 
     it("isAuthenticated deve retornar false quando token é inválido", () => {
       const store = useAuthStore();
-      const mockUser: User = {
+      const mockUser: IUser = {
         id: "1",
         email: "test@example.com",
         fullName: "Test User",
@@ -90,7 +90,7 @@ describe("useAuthStore", () => {
 
     it("userName deve retornar nome do usuário", () => {
       const store = useAuthStore();
-      const mockUser: User = {
+      const mockUser: IUser = {
         id: "1",
         email: "test@example.com",
         fullName: "Test User",
@@ -113,7 +113,7 @@ describe("useAuthStore", () => {
 
     it("userEmail deve retornar email do usuário", () => {
       const store = useAuthStore();
-      const mockUser: User = {
+      const mockUser: IUser = {
         id: "1",
         email: "test@example.com",
         fullName: "Test User",
@@ -132,7 +132,7 @@ describe("useAuthStore", () => {
   describe("initializeAuth", () => {
     it("deve inicializar com token e usuário armazenados", async () => {
       const store = useAuthStore();
-      const mockUser: User = {
+      const mockUser: IUser = {
         id: "1",
         email: "test@example.com",
         fullName: "Test User",
@@ -155,7 +155,7 @@ describe("useAuthStore", () => {
 
     it("deve fazer logout se getCurrentUser falhar", async () => {
       const store = useAuthStore();
-      const mockUser: User = {
+      const mockUser: IUser = {
         id: "1",
         email: "test@example.com",
         fullName: "Test User",
@@ -204,7 +204,7 @@ describe("useAuthStore", () => {
   describe("login", () => {
     it("deve fazer login com sucesso", async () => {
       const store = useAuthStore();
-      const credentials: LoginCredentials = {
+      const credentials: ILoginCredentials = {
         email: "test@example.com",
         password: "password123",
       };
@@ -237,7 +237,7 @@ describe("useAuthStore", () => {
 
     it("deve definir erro se login falhar", async () => {
       const store = useAuthStore();
-      const credentials: LoginCredentials = {
+      const credentials: ILoginCredentials = {
         email: "test@example.com",
         password: "wrongpassword",
       };
@@ -256,7 +256,7 @@ describe("useAuthStore", () => {
   describe("register", () => {
     it("deve registrar usuário com sucesso", async () => {
       const store = useAuthStore();
-      const credentials: RegisterCredentials = {
+      const credentials: IRegisterCredentials = {
         email: "test@example.com",
         password: "password123",
         fullName: "Test User",

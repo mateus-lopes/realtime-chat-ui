@@ -56,11 +56,11 @@ const sizeClass = computed(() => {
 const variantClass = computed(() => {
   switch (props.variant) {
     case "outlined":
-      return "bg-transparent text-blue-500 border border-blue-500 hover:text-white/50 hover:border-white/50";
+      return "bg-transparent text-primary-500 border border-primary-500 hover:text-white/50 hover:border-white/50";
     case "tonal":
-      return "bg-blue-900/60 text-blue-400 hover:bg-blue-900/80";
+      return "bg-primary-900/60 text-primary-400 hover:bg-primary-900/80";
     default:
-      return "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800";
+      return "bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800";
   }
 });
 </script>

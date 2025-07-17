@@ -2,12 +2,12 @@ import apiService from "./api.service";
 import apiConfig from "@/config/api.config";
 import { isTokenValid } from "@/utils/jwt.utils";
 import type {
-  LoginCredentials,
-  RegisterCredentials,
-  ForgotPasswordRequest,
-  ResetPasswordRequest,
-  AuthResponse,
-  User,
+  ILoginCredentials,
+  IRegisterCredentials,
+  IForgotPasswordRequest,
+  IResetPasswordRequest,
+  IAuthResponse,
+  IUser,
 } from "@/types/auth.types";
 
 class AuthService {
@@ -28,7 +28,7 @@ class AuthService {
     }
   }
 
-  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+  async login(credentials: ILoginCredentials): Promise<IAuthResponse> {
     try {
       const response = await apiService.post<any>(
         apiConfig.ENDPOINTS.AUTH.LOGIN,
@@ -39,7 +39,7 @@ class AuthService {
       );
 
       const responseData = response.data || response;
-      const authResponse: AuthResponse = {
+      const authResponse: IAuthResponse = {
         user: responseData.user,
         token: responseData.token || responseData.accessToken,
         refreshToken: responseData.refreshToken || "",
@@ -55,7 +55,7 @@ class AuthService {
     }
   }
 
-  async register(credentials: RegisterCredentials): Promise<AuthResponse> {
+  async register(credentials: IRegisterCredentials): Promise<IAuthResponse> {
     try {
       const response = await apiService.post<any>(
         apiConfig.ENDPOINTS.AUTH.SIGNUP,
@@ -67,7 +67,7 @@ class AuthService {
       );
 
       const responseData = response.data || response;
-      const authResponse: AuthResponse = {
+      const authResponse: IAuthResponse = {
         user: responseData.user,
         token: responseData.token || responseData.accessToken,
         refreshToken: responseData.refreshToken || "",
@@ -83,7 +83,7 @@ class AuthService {
     }
   }
 
-  async forgotPassword(request: ForgotPasswordRequest): Promise<void> {
+  async forgotPassword(request: IForgotPasswordRequest): Promise<void> {
     try {
       await apiService.post(apiConfig.ENDPOINTS.AUTH.FORGOT_PASSWORD, request);
     } catch (error: any) {
@@ -95,7 +95,7 @@ class AuthService {
     }
   }
 
-  async resetPassword(request: ResetPasswordRequest): Promise<void> {
+  async resetPassword(request: IResetPasswordRequest): Promise<void> {
     try {
       await apiService.post(apiConfig.ENDPOINTS.AUTH.RESET_PASSWORD, request);
     } catch (error: any) {
@@ -147,9 +147,9 @@ class AuthService {
     }
   }
 
-  async getCurrentUser(): Promise<User | null> {
+  async getCurrentUser(): Promise<IUser | null> {
     try {
-      const response = await apiService.get<User>(
+      const response = await apiService.get<IUser>(
         apiConfig.ENDPOINTS.AUTH.PROFILE
       );
       return response.data;
@@ -158,9 +158,9 @@ class AuthService {
     }
   }
 
-  async updateProfile(userData: Partial<User>): Promise<User> {
+  async updateProfile(userData: Partial<IUser>): Promise<IUser> {
     try {
-      const response = await apiService.patch<User>(
+      const response = await apiService.patch<IUser>(
         apiConfig.ENDPOINTS.AUTH.UPDATE,
         userData
       );
@@ -176,7 +176,7 @@ class AuthService {
     }
   }
 
-  private handleAuthSuccess(authResponse: AuthResponse): void {
+  private handleAuthSuccess(authResponse: IAuthResponse): void {
     this.storeToken(authResponse.token);
     this.storeRefreshToken(authResponse.refreshToken);
     this.storeUser(authResponse.user);
@@ -198,7 +198,7 @@ class AuthService {
     return localStorage.getItem(this.REFRESH_TOKEN_KEY);
   }
 
-  getStoredUser(): User | null {
+  getStoredUser(): IUser | null {
     try {
       const userData = localStorage.getItem(this.USER_KEY);
       return userData ? JSON.parse(userData) : null;
@@ -215,7 +215,7 @@ class AuthService {
     localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
   }
 
-  private storeUser(user: User): void {
+  private storeUser(user: IUser): void {
     localStorage.setItem(this.USER_KEY, JSON.stringify(user));
   }
 

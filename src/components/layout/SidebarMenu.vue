@@ -26,7 +26,12 @@
         @searchOption="handleSearchOption"
       />
     </div>
-    <ChatList :chats="chats" />
+    <div v-if="chatStore.isUserLoading">CARREGANDO...</div>
+    <ChatList
+      :users="chatStore.users"
+      v-else
+      @selectChat="chatStore.selectChat"
+    />
   </aside>
 </template>
 
@@ -34,10 +39,9 @@
 import ChatList from "../chat/ChatList.vue";
 import NewChatDropdown from "../chat/NewChatDropdown.vue";
 import ChatSearchDropdown from "../chat/ChatSearchDropdown.vue";
-import type { IChat } from "@/types/chat.types";
-import type { User } from "@/types/auth.types";
+import { useChatStore } from "@/stores/chat.store";
 
-defineProps<{ user: User; chats: IChat[] }>();
+const chatStore = useChatStore();
 
 const handleNewGroup = () => {
   console.log("Criar novo grupo");

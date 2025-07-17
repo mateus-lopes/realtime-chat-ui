@@ -14,9 +14,8 @@ export const API_CONFIG = {
       RESET_PASSWORD: "/auth/reset-password",
     },
     CHAT: {
-      MESSAGES: "/chat/messages",
-      ROOMS: "/chat/rooms",
-      UPLOAD: "/chat/upload",
+      MESSAGES: "/messages",
+      USERS: "/messages/users",
     },
     USER: {
       PROFILE: "/user/profile",

@@ -1,5 +1,5 @@
-export interface User {
-  id: string;
+export interface IUser {
+  _id: string;
   email: string;
   fullName: string;
   about?: string;
@@ -8,13 +8,13 @@ export interface User {
   lastSeen?: Date;
 }
 
-export interface LoginCredentials {
+export interface ILoginCredentials {
   email: string;
   password: string;
   rememberMe?: boolean;
 }
 
-export interface RegisterCredentials {
+export interface IRegisterCredentials {
   fullName: string;
   email: string;
   password: string;
@@ -22,35 +22,35 @@ export interface RegisterCredentials {
   acceptTerms?: boolean;
 }
 
-export interface ForgotPasswordRequest {
+export interface IForgotPasswordRequest {
   email: string;
 }
 
-export interface ResetPasswordRequest {
+export interface IResetPasswordRequest {
   token: string;
   password: string;
 }
 
-export interface AuthResponse {
-  user: User;
+export interface IAuthResponse {
+  user: IUser;
   token: string;
   refreshToken: string;
   expiresIn: number;
 }
 
-export interface ValidationRule {
+export interface IValidationRule {
   type: "required" | "email" | "minLength" | "maxLength" | "pattern";
   value?: number | RegExp;
   message: string;
 }
 
-export interface FormField {
+export interface IFormField {
   value: string;
   error: string | null;
   touched: boolean;
-  rules: ValidationRule[];
+  rules: IValidationRule[];
 }
 
-export interface FormState {
-  [key: string]: FormField;
+export interface IFormState {
+  [key: string]: IFormField;
 }

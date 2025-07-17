@@ -3,15 +3,15 @@ import { ref, computed } from "vue";
 import authService from "@/services/auth.service";
 import { isTokenValid } from "@/utils/jwt.utils";
 import type {
-  User,
-  LoginCredentials,
-  RegisterCredentials,
-  ForgotPasswordRequest,
-  ResetPasswordRequest,
+  IUser,
+  ILoginCredentials,
+  IRegisterCredentials,
+  IForgotPasswordRequest,
+  IResetPasswordRequest,
 } from "@/types/auth.types";
 
 export const useAuthStore = defineStore("auth", () => {
-  const user = ref<User | null>(null);
+  const user = ref<IUser | null>(null);
   const token = ref<string | null>(null);
   const refreshToken = ref<string | null>(null);
   const isLoading = ref(false);
@@ -57,7 +57,7 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const login = async (credentials: LoginCredentials) => {
+  const login = async (credentials: ILoginCredentials) => {
     try {
       isLoading.value = true;
       error.value = null;
@@ -75,7 +75,7 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const register = async (credentials: RegisterCredentials) => {
+  const register = async (credentials: IRegisterCredentials) => {
     try {
       isLoading.value = true;
       error.value = null;
@@ -93,7 +93,7 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const forgotPassword = async (request: ForgotPasswordRequest) => {
+  const forgotPassword = async (request: IForgotPasswordRequest) => {
     try {
       isLoading.value = true;
       error.value = null;
@@ -106,7 +106,7 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const resetPassword = async (request: ResetPasswordRequest) => {
+  const resetPassword = async (request: IResetPasswordRequest) => {
     try {
       isLoading.value = true;
       error.value = null;
@@ -146,7 +146,7 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const updateUser = async (userData: Partial<User>) => {
+  const updateUser = async (userData: Partial<IUser>) => {
     try {
       isLoading.value = true;
       error.value = null;

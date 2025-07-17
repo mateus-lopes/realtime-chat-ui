@@ -6,25 +6,21 @@
         v-if="activeSection === 'chats'"
         class="flex h-screen bg-gradient-to-b from-[#020917] to-[#101725]"
       >
-        <SidebarMenu
-          v-if="user"
-          :user="user"
-          :chats="chats"
-          :selectedChatId="selectedChatId"
-          @selectChat="selectChat"
-        />
+        <SidebarMenu v-if="chatStore.users" @selectChat="selectChat" />
         <ChatArea
-          v-if="selectedChat && user"
-          :chat="selectedChat"
-          :messages="selectedChat.messages"
-          :user="user"
+          v-if="chatStore.selectedUser._id"
+          :chat="chatStore.selectedUser"
+          :messages="chatStore.messages"
+          :user="chatStore.selectedUser"
           @sendMessage="sendMessage"
         />
         <div
           v-else
-          class="flex-1 flex items-center justify-center text-white/60 text-lg"
+          class="flex-1 flex items-center justify-center text-white/60 text-lg bg-black"
         >
-          Selecione uma conversa para começar
+          <div>
+            <p>Selecione uma conversa para começar a conversar!</p>
+          </div>
         </div>
       </div>
 
@@ -50,16 +46,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import SideMenu from "@/components/layout/SideMenu.vue";
 import SidebarMenu from "@/components/layout/SidebarMenu.vue";
 import ChatArea from "@/components/chat/ChatArea.vue";
 import UserProfile from "@/components/user/UserProfile.vue";
 import { useAuthStore } from "@/stores/auth.store";
+import { useChatStore } from "@/stores/chat.store";
 
 const authStore = useAuthStore();
-const user = computed(() => authStore.user);
+const chatStore = useChatStore();
 
+const user = computed(() => authStore.user);
 // Mock chats
 const chats = ref([
   {
@@ -170,6 +168,10 @@ function getSectionTitle(section: string) {
   };
   return titles[section] || "Seção";
 }
+
+onMounted(() => {
+  chatStore.getUsers();
+});
 </script>
 
 <style scoped>

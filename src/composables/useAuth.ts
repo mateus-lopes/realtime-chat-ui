@@ -1,28 +1,17 @@
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
 import type {
-  LoginCredentials,
-  RegisterCredentials,
-  ForgotPasswordRequest,
-  ResetPasswordRequest,
+  ILoginCredentials,
+  IRegisterCredentials,
+  IForgotPasswordRequest,
+  IResetPasswordRequest,
 } from "@/types/auth.types";
 
-/**
- * Composable mínimo para autenticação
- * Mantém apenas funções que agregam valor real:
- * - Lógica de redirecionamento após ações
- * - Guards de navegação
- * - Inicialização
- *
- * Para acessar dados simples, use diretamente a store:
- * const authStore = useAuthStore();
- * const userName = authStore.userName;
- */
 export function useAuth() {
   const authStore = useAuthStore();
   const router = useRouter();
 
-  const login = async (credentials: LoginCredentials) => {
+  const login = async (credentials: ILoginCredentials) => {
     try {
       await authStore.login(credentials);
       const redirectTo =
@@ -33,7 +22,7 @@ export function useAuth() {
     }
   };
 
-  const register = async (credentials: RegisterCredentials) => {
+  const register = async (credentials: IRegisterCredentials) => {
     try {
       await authStore.register(credentials);
       await router.push("/chat");
@@ -42,7 +31,7 @@ export function useAuth() {
     }
   };
 
-  const forgotPassword = async (request: ForgotPasswordRequest) => {
+  const forgotPassword = async (request: IForgotPasswordRequest) => {
     try {
       await authStore.forgotPassword(request);
     } catch (error) {
@@ -50,7 +39,7 @@ export function useAuth() {
     }
   };
 
-  const resetPassword = async (request: ResetPasswordRequest) => {
+  const resetPassword = async (request: IResetPasswordRequest) => {
     try {
       await authStore.resetPassword(request);
       await router.push("/login");

@@ -27,50 +27,9 @@
         </div>
 
         <div class="error-actions">
-          <MobileButton variant="primary" size="lg" @click="goHome" full-width>
-            <svg viewBox="0 0 24 24" width="20" height="20">
-              <path
-                fill="currentColor"
-                d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"
-              />
-            </svg>
+          <MobileButton variant="outlined" size="lg" @click="goHome" full-width>
             Ir para o Início
           </MobileButton>
-
-          <MobileButton variant="outline" size="lg" @click="goBack" full-width>
-            <svg viewBox="0 0 24 24" width="20" height="20">
-              <path
-                fill="currentColor"
-                d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"
-              />
-            </svg>
-            Voltar
-          </MobileButton>
-        </div>
-
-        <div class="helpful-links">
-          <h3 class="links-title">Links úteis:</h3>
-          <div class="links-grid">
-            <router-link to="/login" class="helpful-link">
-              <div class="link-icon">🔐</div>
-              <span>Login</span>
-            </router-link>
-
-            <router-link to="/register" class="helpful-link">
-              <div class="link-icon">👤</div>
-              <span>Criar Conta</span>
-            </router-link>
-
-            <router-link to="/forgot-password" class="helpful-link">
-              <div class="link-icon">🔑</div>
-              <span>Recuperar Senha</span>
-            </router-link>
-
-            <a href="mailto:suporte@chatapp.com" class="helpful-link">
-              <div class="link-icon">📧</div>
-              <span>Suporte</span>
-            </a>
-          </div>
         </div>
       </div>
     </div>
@@ -131,12 +90,12 @@ const goBack = () => {
   bottom: 0;
   background-image: radial-gradient(
       circle at 25% 75%,
-      rgba(239, 68, 68, 0.1) 0%,
+      rgba(22, 30, 39, 0.63) 0%,
       transparent 50%
     ),
     radial-gradient(
       circle at 75% 25%,
-      rgba(59, 130, 246, 0.1) 0%,
+      rgba(35, 39, 73, 0.486) 0%,
       transparent 50%
     );
   animation: float 20s ease-in-out infinite;
@@ -150,8 +109,8 @@ const goBack = () => {
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(239, 68, 68, 0.05) 0%,
-    rgba(59, 130, 246, 0.05) 100%
+    rgba(89, 138, 230, 0.05) 0%,
+    rgba(0, 0, 0, 0.05) 100%
   );
 }
 
